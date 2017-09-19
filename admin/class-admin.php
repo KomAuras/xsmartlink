@@ -12,6 +12,8 @@ class Admin
     private $option_name;
     private $settings;
     private $settings_group;
+    private $browse;
+    private $loader;
 
     public function __construct($plugin_slug, $version, $option_name) {
         $this->plugin_slug = $plugin_slug;
@@ -19,6 +21,11 @@ class Admin
         $this->option_name = $option_name;
         $this->settings = get_option($this->option_name);
         $this->settings_group = $this->option_name.'_group';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-browse.php';
+        $this->browse = new Browse($this->plugin_slug, $this->version, $this->option_name);
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-loader.php';
+        $this->loader = new Loader();
+        $this->define_hooks();
     }
 
     /**
@@ -67,7 +74,13 @@ class Admin
 
     public function assets() {
         wp_enqueue_style($this->plugin_slug, plugin_dir_url(__FILE__).'css/xsmartlink-admin.css', [], $this->version);
-        wp_enqueue_script($this->plugin_slug, plugin_dir_url(__FILE__).'js/xsmartlink-admin.js', ['jquery'], $this->version, true);
+        wp_enqueue_script($this->plugin_slug, plugin_dir_url(__FILE__).'js/xsmartlink-admin.js', ['jquery'], $this->version, false);
+    }
+
+    public function define_hooks() {
+        $this->loader->add_action('wp_loaded', $this->browse, 'delete');
+        $this->loader->add_action('wp_loaded', $this->browse, 'delete_all');
+        $this->loader->run();
     }
 
     public function register_settings() {
@@ -81,7 +94,7 @@ class Admin
             __( 'Acceptors', $this->plugin_slug ),
             'manage_options',
             $this->plugin_slug.'_list',
-            [$this, 'render_list'],
+            [$this->browse, 'render'],
             plugins_url( 'img/icon.png', __FILE__ ),
             6
         );
@@ -101,15 +114,6 @@ class Admin
             $this->plugin_slug.'_options',
             [$this, 'render_options']
         );
-    }
-
-    /**
-     * Render the view using MVC pattern.
-     */
-    public function render_list() {
-        // View
-        $heading = Info::get_plugin_title();
-        require_once plugin_dir_path(dirname(__FILE__)).'admin/partials/view_list.php';
     }
 
     /**

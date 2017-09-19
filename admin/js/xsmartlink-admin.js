@@ -16,3 +16,72 @@
   });
 
 })(jQuery);
+/*
+var $j = jQuery.noConflict();
+var records1=0;
+var current1=0;
+var records2=0;
+var current2=0;
+function xlinks_process_relinks_js1() {
+    if (records1==0){
+        $j.post(ajaxurl, {action:'process_ajax1',records:records1}, function(response) {
+            records1 = response;
+            $j('#xlinks_progress').html('');
+            $j("#progressbar").show();
+            $j('#progressbar .value').width($j('#progressbar').width()/100*(current1/records1*100));
+            $j("#xl_relink_button").attr("disabled", "disabled");
+            $j("#xl_delete404_button").attr("disabled", "disabled");
+            window.setTimeout(xlinks_process_run_js1, 50);
+        });
+    }
+};
+function xlinks_process_run_js1(){
+    if (current1 < records1){
+        $j.post(ajaxurl, {action:'process_ajax1',records:records1,offset:current1}, function(response) {
+            current1 = current1 + <?=XLINKS_PER_RECORD?>;
+            if (current1 >= records1){
+                $j("#progressbar").hide();
+                $j('#xlinks_progress').html('<?=_e('Relink completed!','xlinks')?>');
+                records1=0;
+                current1=0;
+                $j("#xl_relink_button").removeAttr('disabled');
+                $j("#xl_delete404_button").removeAttr('disabled');
+            }else{
+                $j('#progressbar .value').width($j('#progressbar').width()/100*(current1/records1*100));
+                window.setTimeout(xlinks_process_run_js1, 50);
+            }
+        });
+    }
+}
+function xlinks_process_relinks_js2() {
+    if (records2==0){
+        $j.post(ajaxurl, {action:'process_ajax2',records:records2}, function(response) {
+            records2 = response;
+            $j('#xlinks_progress').html('');
+            $j("#progressbar").show();
+            $j('#progressbar .value').width($j('#progressbar').width()/100*(current2/records2*100));
+            $j("#xl_relink_button").attr("disabled", "disabled");
+            $j("#xl_delete404_button").attr("disabled", "disabled");
+            window.setTimeout(xlinks_process_run_js2, 50);
+        });
+    }
+};
+function xlinks_process_run_js2(){
+    if (current2 < records2){
+        $j.post(ajaxurl, {action:'process_ajax2',records:records2,offset:current2}, function(response) {
+            current2 = current2 + <?=XLINKS_PER_RECORD?>;
+            if (current2 >= records2){
+                $j("#progressbar").hide();
+                $j('#xlinks_progress').html('<?=_e('Search completed!','xlinks')?>');
+                records2=0;
+                current2=0;
+                $j("#xl_relink_button").removeAttr('disabled');
+                $j("#xl_delete404_button").removeAttr('disabled');
+            }else{
+                $j('#progressbar .value').width($j('#progressbar').width()/100*(current2/records2*100));
+                window.setTimeout(xlinks_process_run_js2, 50);
+            }
+        });
+    }
+}
+*/

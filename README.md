@@ -1,6 +1,6 @@
-~Current Version:2.4~
+~Current Version:1.0.0~
 
-xlinks
+xSmart Link
 ======
 
 Smart linking plugin for Wordpress

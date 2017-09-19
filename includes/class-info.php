@@ -35,6 +35,9 @@ class Info
      */
     const UPDATE_URL = 'http://update.com/';
 
+    const XLINKS_PER_PAGE = 10;
+    const XLINKS_PAGE_KEY = 'pgn';
+
     /**
      * Retrieves the plugin title from the main plugin file.
      *
