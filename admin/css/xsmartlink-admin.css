@@ -4,33 +4,34 @@
 
 /*
 .metabox-holder input,
+
 .metabox-holder textarea {
-  width: 100%;
-  display: block;
+    width: 100%;
+    display: block;
 }
 
 .metabox-holder input[type="text"] {
-  max-width: 250px;
+    max-width: 250px;
 }
 
-.metabox-holder input[type="checkbox"]{
-  max-width: 10px;
+.metabox-holder input[type="checkbox"] {
+    max-width: 10px;
 }
 */
 
 .metabox-holder textarea {
-  	max-width: 500px;
+    max-width: 500px;
 }
 
 .spinner {
-  	float: left;
-  	margin-top: 25px;
-  	margin-left: 20px;
+    float: left;
+    margin-top: 25px;
+    margin-left: 20px;
 }
 
 .submit-wrap .submit {
-  	float: left;
-  	padding-top: 0;
+    float: left;
+    padding-top: 0;
 }
 
 /*====================================
@@ -38,44 +39,54 @@
 ====================================*/
 
 .error_line {
-    background:#FFDDDD;
+    background: #FFDDDD;
 }
+
 div.pagination {
-text-align:left;
-padding: 7px;
-margin: 3px;
-float:left;
+    text-align: left;
+    padding: 7px;
+    margin: 3px;
+    float: left;
 }
+
 div.pagination a {
-padding: 2px 5px 2px 5px;
-margin: 2px;
-text-decoration: none; /* no underline */
-color: #000000;
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    text-decoration: none; /* no underline */
+    color: #000000;
 }
+
 div.pagination a:hover, div.pagination a:active {
-background-color: #0074A2;
-color: #fff;
+    background-color: #0074A2;
+    color: #fff;
 }
+
 div.pagination span.current {
-padding: 2px 5px 2px 5px;
-margin: 2px;
-font-weight: bold;
-background-color: #AAA;
-color: #FFF;
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    font-weight: bold;
+    background-color: #AAA;
+    color: #FFF;
 }
+
 div.pagination span.disabled {
-padding: 2px 5px 2px 5px;
-margin: 2px;
-color: #DDD;
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    color: #DDD;
 }
-#progressbar{
+
+#progressbar {
     height: 10px;
     padding: 1px;
     background: #eee;
     border: 1px solid lightgray;
 }
-#progressbar .value{
+
+#progressbar .value {
     height: 10px;
     background: #00cc66;
 }
 
+.wp-admin input[type=file] {
+    width: 100%;
+}
