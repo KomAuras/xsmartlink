@@ -26,9 +26,17 @@ class Admin {
 		$this->settings       = get_option( $this->option_name );
 		$this->settings_group = $this->option_name . '_group';
 
-		$this->browse = new Browse( $this->plugin_slug, $this->version, $this->option_name );
-		$this->import = new Import( $this->plugin_slug, $this->version, $this->option_name );
+		$this->browse  = new Browse( $this->plugin_slug, $this->version, $this->option_name );
+		$this->import  = new Import( $this->plugin_slug, $this->version, $this->option_name );
 		$this->anchors = new Anchors( $this->plugin_slug, $this->version, $this->option_name );
+	}
+
+	public function link_to_plugin_config( $links, $file ) {
+		if ( mb_stripos( $file, $this->plugin_slug ) !== false ) {
+			$links[] = '<a href="' . admin_url( 'admin.php?page=' . $this->plugin_slug . '_options' ) . '">' . __( 'Settings' ) . '</a>';
+		}
+
+		return $links;
 	}
 
 	/**
@@ -46,29 +54,30 @@ class Admin {
 			$slug    = $field['slug'];
 			$setting = $this->option_name . '[' . $slug . ']';
 			$label   = __( $field['label'], $this->plugin_slug );
-			$text    = isset($field['text']) ? __( $field['text'], $this->plugin_slug ) : "";
+			$text    = isset( $field['text'] ) ? __( $field['text'], $this->plugin_slug ) : "";
 
 			if ( $field['type'] === 'text' ) {
 				$output[] = array(
-					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
-					'control'=> '<input type="text" id="' . $setting . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
+					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
+					'control' => '<input type="text" id="' . $setting . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
 				);
 			} elseif ( $field['type'] === 'textarea' ) {
 				$output[] = array(
-					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
-					'control'=> '<textarea id="' . $setting . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>'
+					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
+					'control' => '<textarea id="' . $setting . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>'
 				);
 			} elseif ( $field['type'] === 'checkbox' ) {
-				$v      = '';
+				$v = '';
 				if ( $settings[ $slug ] == 1 ) {
 					$v = ' checked';
 				}
 				$output[] = array(
-					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
-					'control'=> '<input type="checkbox" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> '. $text
+					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
+					'control' => '<input type="checkbox" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> ' . $text
 				);
 			}
 		}
+
 		return $output;
 	}
 
@@ -82,7 +91,7 @@ class Admin {
 	}
 
 	public function add_menus() {
-     	//$translations = get_translations_for_domain( $this->plugin_slug );
+		//$translations = get_translations_for_domain( $this->plugin_slug );
 		//print_r($translations->entries);
 		add_menu_page(
 			__( 'Acceptors', $this->plugin_slug ),
@@ -135,34 +144,34 @@ class Admin {
 		// Generate the settings fields
 		$field_args = [
 			[
-				'label' => 'Links in posts' . __( 'Acceptors', $this->plugin_slug ),
+				'label' => __( 'Links in posts', $this->plugin_slug ),
 				'slug'  => 'insert_in_pages',
 				'type'  => 'checkbox',
-				'text'  => 'Show'
+				'text'  => __( 'Show', $this->plugin_slug ),
 			],
 			[
-				'label' => 'All links',
+				'label' => __( 'All links', $this->plugin_slug ),
 				'slug'  => 'global_req',
 				'type'  => 'text'
 			],
 			[
-				'label' => 'Local links',
+				'label' => __( 'Local links', $this->plugin_slug ),
 				'slug'  => 'local_req',
 				'type'  => 'text'
 			],
 			[
-				'label' => 'Local url',
+				'label' => __( 'Local url', $this->plugin_slug ),
 				'slug'  => 'local_domain',
 				'type'  => 'text'
 			],
 			[
-				'label' => 'For new posts',
+				'label' => __( 'For new posts', $this->plugin_slug ),
 				'slug'  => 'new_post_to_anchors',
 				'type'  => 'checkbox',
-				'text'  => 'Add to anchors'
+				'text'  => __( 'Add to anchors', $this->plugin_slug ),
 			],
 			[
-				'label' => 'Default count for new anchor',
+				'label' => __( 'Default count for new anchor', $this->plugin_slug ),
 				'slug'  => 'new_req',
 				'type'  => 'text'
 			],

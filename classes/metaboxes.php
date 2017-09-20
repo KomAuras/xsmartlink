@@ -21,7 +21,7 @@ class MetaBoxes {
 	public function add_some_meta_box() {
 		$post = get_post();
 		$data = $this->anchors->get_post_anchor_list( $post );
-		if ( strlen($data) ) {
+		if ( strlen( $data ) ) {
 			add_meta_box(
 				'sea_shortcodes_meta_box',
 				$this->title,

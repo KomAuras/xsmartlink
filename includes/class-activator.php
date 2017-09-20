@@ -16,12 +16,12 @@ class Activator {
 		$option_name = INFO::OPTION_NAME;
 		if ( empty( get_option( $option_name ) ) ) {
 			$default_options = array(
-				'insert_in_pages' => 1,
-				'global_req'      => 5,
-				'local_req'       => 1,
-				'local_domain'    => get_site_url(),
+				'insert_in_pages'     => 1,
+				'global_req'          => 5,
+				'local_req'           => 1,
+				'local_domain'        => get_site_url(),
 				'new_post_to_anchors' => 0,
-				'new_req'         =>3,
+				'new_req'             => 3,
 			);
 			update_option( $option_name, $default_options );
 		}

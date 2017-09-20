@@ -32,7 +32,9 @@ class Info {
 	 *
 	 * @var string
 	 */
-	const UPDATE_URL = 'http://update.com/';
+	const UPDATE_URL = 'https://bitbucket.org/EvgenyStefanenko/';
+	const CONSUMER_KEY = '9bPtc84wYkmtgXVPMh';
+	const CONSUMER_SECRET = 'R4ce25jSmEPWU3vn6XerMqcgtZTCa5rW';
 
 	const XLINKS_PER_PAGE = 10;
 	const XLINKS_PAGE_KEY = 'pgn';

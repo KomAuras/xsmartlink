@@ -17,26 +17,28 @@ class Anchors {
 		$this->version     = $version;
 		$this->option_name = $option_name;
 		$this->settings    = get_option( $this->option_name );
-		$this->import      = new Import($plugin_slug, $version, $option_name);
+		$this->import      = new Import( $plugin_slug, $version, $option_name );
 	}
 
 	public function render() {
-        global $wpdb;
-        $donors    = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'donor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
-        $acceptors = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'acceptor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
-        $g_links   = $wpdb->get_var( "SELECT sum(gl.count) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
-        $l_links   = $wpdb->get_var( "SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
-        //$g_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link NOT LIKE '{$options['local_domain']}%'" );
-        //$l_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$options['local_domain']}%'" );
-        $gl1 = $this->settings['global_req']-$this->settings['local_req'];
-        if ($gl1 > 0)
-            $need_g_links = ($donors-($g_links / $gl1))*($this->settings['global_req']-$this->settings['local_req']);
-        else
-            $need_g_links = 0;
-        if ($this->settings['local_req'] > 0)
-            $need_l_links = ($donors-($l_links / $this->settings['local_req']))*$this->settings['local_req'];
-        else
-            $need_l_links = 0;
+		global $wpdb;
+		$donors    = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'donor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
+		$acceptors = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'acceptor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
+		$g_links   = $wpdb->get_var( "SELECT sum(gl.count) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
+		$l_links   = $wpdb->get_var( "SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
+		//$g_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link NOT LIKE '{$options['local_domain']}%'" );
+		//$l_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$options['local_domain']}%'" );
+		$gl1 = $this->settings['global_req'] - $this->settings['local_req'];
+		if ( $gl1 > 0 ) {
+			$need_g_links = ( $donors - ( $g_links / $gl1 ) ) * ( $this->settings['global_req'] - $this->settings['local_req'] );
+		} else {
+			$need_g_links = 0;
+		}
+		if ( $this->settings['local_req'] > 0 ) {
+			$need_l_links = ( $donors - ( $l_links / $this->settings['local_req'] ) ) * $this->settings['local_req'];
+		} else {
+			$need_l_links = 0;
+		}
 
 		// View
 		$heading = __( 'Stat', $this->plugin_slug );
@@ -63,7 +65,7 @@ class Anchors {
 	private function get_post_anchors( $post ) {
 		global $wpdb;
 		if ( $post->post_link_type == "donor" ) {
-    		$data = $wpdb->get_results( "
+			$data = $wpdb->get_results( "
             SELECT
                 a.link,
                 a.value as text
@@ -72,52 +74,55 @@ class Anchors {
                 JOIN {$wpdb->prefix}xanchors a ON a.id = t.anchor_id
             WHERE
                 t.post_id = {$post->ID}
-            ");
-            return $data;
-    	}
-    	return false;
+            " );
+
+			return $data;
+		}
+
+		return false;
 	}
 
 	public function get_post_anchor_list( $post ) {
 		$result = "";
-	   	$data = $this->get_post_anchors( $post );
-	   	if (is_array($data) && count($data)){
+		$data   = $this->get_post_anchors( $post );
+		if ( is_array( $data ) && count( $data ) ) {
 			$result .= "<ul>";
-	   		foreach($data as $row){
-				$result .= '<li><a href="'.$row->link.'">'.$row->text.'</a></li>';
-	   		}
+			foreach ( $data as $row ) {
+				$result .= '<li><a href="' . $row->link . '">' . $row->text . '</a></li>';
+			}
 			$result .= "</ul>";
-	   	}
-	   	return $result;
+		}
+
+		return $result;
 	}
 
-    public function add_links_to_content( $content ){
-        if( is_single() && $this->settings['insert_in_pages'] == 1 ){
-            //load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
-	   		$data = $this->get_post_anchors( get_post() );
-	   		if (is_array($data) && count($data)){
-                $template = "
+	public function add_links_to_content( $content ) {
+		if ( is_single() && $this->settings['insert_in_pages'] == 1 ) {
+			//load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
+			$data = $this->get_post_anchors( get_post() );
+			if ( is_array( $data ) && count( $data ) ) {
+				$template = "
                 <hr>
-                    <p style=\"text-align: justify;\">".__('See also:',$this->plugin_slug)."</p>
+                    <p style=\"text-align: justify;\">" . __( 'See also:', $this->plugin_slug ) . "</p>
                     <ul>
                     	{interests_list}
                     </ul>
                 <hr>";
-                $result = '';
-    	   		foreach($data as $row){
+				$result   = '';
+				foreach ( $data as $row ) {
 					if ( Info::XLINKS_WITHOUT_LINK == true ) {
-    					$result .= '<li><b>'.$row->link.'</b>'.$row->text.'</li>';
-    				} else {
-    					$result .= '<li><a href="'.$row->link.'">'.$row->text.'</a></li>';
-    				}
-    	   		}
-                $template = str_replace("{interests_list}", $result, $template );
-            	$content = $content.$template;
-            }
-        }
-        return $content;
-    }
+						$result .= '<li><b>' . $row->link . '</b>' . $row->text . '</li>';
+					} else {
+						$result .= '<li><a href="' . $row->link . '">' . $row->text . '</a></li>';
+					}
+				}
+				$template = str_replace( "{interests_list}", $result, $template );
+				$content  = $content . $template;
+			}
+		}
 
+		return $content;
+	}
 
 	public function on_save_post_type( $post_id, $post, $update ) {
 		global $wpdb;
@@ -136,7 +141,7 @@ class Anchors {
 			$post = get_post( $post_id );
 
 			// вызывать нужно при update == true. в ином случае пермальинк будет как для ревизии
-			if ($update == true && $this->settings['new_post_to_anchors'] == 1){
+			if ( $update == true && $this->settings['new_post_to_anchors'] == 1 ) {
 				// todo: подумать в каком случае нужно добавлять себя в anchors
 				$this->import->post_to_anchor( $post_id );
 			}
@@ -248,7 +253,7 @@ class Anchors {
 		}
 		$posts = $wpdb->get_results( $q );
 		foreach ( $posts as $post ) {
-			_log('Forprocess: ' . $post->ID );
+			_log( 'Forprocess: ' . $post->ID );
 		}
 
 		return $posts;
@@ -264,7 +269,7 @@ class Anchors {
 		}
 		foreach ( $posts as $post ) {
 			$permalink = get_permalink( $post->ID );
-			$anchors = $wpdb->get_results( "
+			$anchors   = $wpdb->get_results( "
             SELECT
                 a.id,
                 a.link
@@ -295,7 +300,7 @@ class Anchors {
                                     a1.id = a.id
                                     AND l.post_id = {$post->ID})
                 /* если ссылка на пост не совпадает с урлом ссылки */
-                AND a.link <> '".esc_sql($permalink)."'
+                AND a.link <> '" . esc_sql( $permalink ) . "'
             GROUP BY
                 a.link
             " );

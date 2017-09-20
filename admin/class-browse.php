@@ -26,9 +26,9 @@ class Browse {
 		$this->option_name    = $option_name;
 		$this->settings       = get_option( $this->option_name );
 		$this->settings_group = $this->option_name . '_group';
-		$this->loader = new Loader();
-		$this->anchors = new Anchors( $plugin_slug, $version, $option_name );
-		$this->idna = new idna_convert();
+		$this->loader         = new Loader();
+		$this->anchors        = new Anchors( $plugin_slug, $version, $option_name );
+		$this->idna           = new idna_convert();
 		$this->define_hooks();
 	}
 
@@ -56,7 +56,7 @@ class Browse {
 			$this->loader->add_action( 'load-post-new.php', $this->anchors, 'add_metaboxes' );
 		}
 		// добавляем ссылки в конец поста
-    	$this->loader->add_filter( 'the_content', $this->anchors, 'add_links_to_content');
+		$this->loader->add_filter( 'the_content', $this->anchors, 'add_links_to_content' );
 		$this->loader->run();
 	}
 
@@ -142,7 +142,7 @@ class Browse {
 		}
 
 		// View
-		$heading = __('Manage links',$this->plugin_slug);
+		$heading = __( 'Manage links', $this->plugin_slug );
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_browse.php';
 	}
 

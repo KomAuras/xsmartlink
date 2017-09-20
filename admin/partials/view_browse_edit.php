@@ -27,8 +27,9 @@
             </tr>
         </table>
         <p>
-        	<input type="submit" name="submit" id="submit" class="button button-primary" value="<?= _e( 'Save' ) ?>">
-            <input action="action" onclick="window.history.go(-1); return false;" class="button button-cancel" type="button" value="<?= _e('Back',$this->plugin_slug) ?>" />
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?= _e( 'Save' ) ?>">
+            <input action="action" onclick="window.history.go(-1); return false;" class="button button-cancel"
+                   type="button" value="<?= _e( 'Back', $this->plugin_slug ) ?>"/>
         </p>
     </form>
 
