@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2017-09-20 20:53+1000\n"
-"PO-Revision-Date: 2017-09-20 20:54+1000\n"
+"POT-Creation-Date: 2017-09-20 21:42+1000\n"
+"PO-Revision-Date: 2017-09-20 21:43+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -21,69 +21,79 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: languages\n"
 "X-Poedit-SearchPath-1: .\n"
+"X-Poedit-SearchPathExcluded-0: includes/vendor/plugin-update-checker\n"
 
 #: admin/class-admin.php:36
 msgid "Settings"
 msgstr "Настройки"
 
-#: admin/class-admin.php:97 admin/class-admin.php:98
+#: admin/class-admin.php:89
+msgid "All links checked!"
+msgstr "Все ссылки проверены!"
+
+#: admin/class-admin.php:90
+msgid "All links linked!"
+msgstr "Перелинковка выполнена!"
+
+#: admin/class-admin.php:103 admin/class-admin.php:104
 #: admin/partials/view_stat.php:13
 msgid "Acceptors"
 msgstr "Акцепторы"
 
-#: admin/class-admin.php:107 admin/class-admin.php:108
+#: admin/class-admin.php:113 admin/class-admin.php:114
 #: admin/class-import.php:187
 msgid "Import"
 msgstr "Импорт"
 
-#: admin/class-admin.php:115 admin/class-admin.php:116
+#: admin/class-admin.php:121 admin/class-admin.php:122
 #: admin/class-import.php:41 admin/partials/view_export.php:11
 msgid "Export"
 msgstr "Экспорт"
 
-#: admin/class-admin.php:123 admin/class-admin.php:124
+#: admin/class-admin.php:129 admin/class-admin.php:130
 #: admin/class-anchors.php:44
 msgid "Stat"
 msgstr "Статистика"
 
-#: admin/class-admin.php:131 admin/class-admin.php:132
-#: admin/class-admin.php:186
+#: admin/class-admin.php:137 admin/class-admin.php:138
+#: admin/class-admin.php:192
 msgid "Options"
 msgstr "Настройки плагина"
 
-#: admin/class-admin.php:147
+#: admin/class-admin.php:153
 msgid "Links in posts"
 msgstr "Добавлять ссылки в конец страницы"
 
-#: admin/class-admin.php:150
+#: admin/class-admin.php:156
 msgid "Show"
 msgstr "Выводить"
 
-#: admin/class-admin.php:153
+#: admin/class-admin.php:159
 msgid "All links"
 msgstr "Общее количество ссылок на странице доноре"
 
-#: admin/class-admin.php:158
+#: admin/class-admin.php:164
 msgid "Local links"
 msgstr "Количество локальных ссылок на странице доноре"
 
-#: admin/class-admin.php:163
+#: admin/class-admin.php:169
 msgid "Local url"
 msgstr "Имя локального домена"
 
-#: admin/class-admin.php:168
+#: admin/class-admin.php:174
 msgid "For new posts"
 msgstr "Новые записи"
 
-#: admin/class-admin.php:171
+#: admin/class-admin.php:177
 msgid "Add to anchors"
 msgstr "Добавлять в список ссылок"
 
-#: admin/class-admin.php:174
+#: admin/class-admin.php:180
+#, fuzzy
 msgid "Default count for new anchor"
 msgstr "Количество связей для ссылок (по умолчанию)"
 
-#: admin/class-admin.php:187
+#: admin/class-admin.php:193
 msgid "Submit"
 msgstr "Отправить"
 
@@ -262,26 +272,5 @@ msgstr "Внешних ссылок"
 msgid "Need local links"
 msgstr "Локальных ссылок"
 
-#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:358
-msgid "Check for updates"
-msgstr ""
-
-#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:404
-msgid "This plugin is up to date."
-msgstr ""
-
-#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:406
-msgid "A new version of this plugin is available."
-msgstr ""
-
-#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:408
-#, php-format
-msgid "Unknown update checker status \"%s\""
-msgstr ""
-
-#: includes/vendor/plugin-update-checker/Puc/v4/Vcs/PluginUpdateChecker.php:83
-msgid "There is no changelog available."
-msgstr ""
-
-#~ msgid "Search Results for: %s"
-#~ msgstr "Вот и ответ - %s"
+#~ msgid "All links checked"
+#~ msgstr "Поиск выполнен"

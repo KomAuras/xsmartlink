@@ -43,7 +43,7 @@ function xsml_process_run_js1() {
             current1 = current1 + 20;
             if (current1 >= records1) {
                 $j("#progressbar").hide();
-                $j('#xlinks_progress').html('ok');
+                $j('#xlinks_progress').html(wma.all_linked);
                 records1 = 0;
                 current1 = 0;
                 $j("#xl_relink_button").removeAttr('disabled');
@@ -76,7 +76,7 @@ function xsml_process_run_js2() {
             current2 = current2 + 20;
             if (current2 >= records2) {
                 $j("#progressbar").hide();
-                $j('#xlinks_progress').html('ok');
+                $j('#xlinks_progress').html(wma.all_links_checked);
                 records2 = 0;
                 current2 = 0;
                 $j("#xl_relink_button").removeAttr('disabled');

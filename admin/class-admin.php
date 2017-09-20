@@ -84,6 +84,12 @@ class Admin {
 	public function assets() {
 		wp_enqueue_style( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'css/xsmartlink-admin.css', [], $this->version );
 		wp_enqueue_script( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'js/xsmartlink-admin.js', [ 'jquery' ], $this->version, false );
+		//wp_enqueue_script( 'motivation-scripts', plugin_dir_url( __FILE__ ) . 'scripts' );
+		wp_localize_script( $this->plugin_slug, 'wma', array(
+				'all_links_checked' => __( 'All links checked!', $this->plugin_slug ),
+				'all_linked' => __( 'All links linked!', $this->plugin_slug ),
+			)
+		);
 	}
 
 	public function register_settings() {
