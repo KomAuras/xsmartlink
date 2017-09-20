@@ -24,21 +24,74 @@ class Import {
 		$this->show();
 	}
 
+	public function post_to_anchor( $post_id ) {
+		$post = get_post( $post_id );
+		$this->add_anchor(array($post->post_title, get_permalink( $post->ID ), $this->settings['new_req']), $flags, false);
+	}
+
+	public function add_anchor( $vals, &$flags, $update_req=true ) {
+		global $wpdb;
+    	$vals[0] = str_replace( '\"', '', $vals[0] );
+    	$vals[0] = str_replace( '"', '', $vals[0] );
+    	$count = $wpdb->get_var( "SELECT count(*) as count FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "'" );
+    	if ( $count == 0 ) {
+    		$sql = $this->return_sql( $vals );
+    		if ( $sql ) {
+				$wpdb->query( "INSERT INTO {$wpdb->prefix}xanchors  (`value`, `link`, `req`) VALUES {$sql}" );
+				if (isset($flags)){
+    				$flags['added']++;
+    			}
+    		}
+    	} elseif($update_req) {
+    		$id1 = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "' LIMIT 1" );
+        	$count = isset($vals[2]) ? $vals[2] : $this->settings['new_req'];
+    		if ( $id1 > 0 && $count > 0 ) {
+    			$wpdb->query( "UPDATE {$wpdb->prefix}xanchors SET req = req + {$count} WHERE id={$id1}" );
+				if (isset($flags)){
+    				$flags['updated']++;
+    			}
+    		}
+    	}
+    }
+
+    private function return_sql( $data ){
+        $count = isset($data['2']) ? $data['2'] : $this->settings['new_req'];
+        if( $data['0']!="" AND $data['1']!="" AND $count!="" ){
+            $result =  '("'.esc_sql($data[0]).'","'.$data[1].'", "'.$count.'")';
+            return $result;
+        }
+        return false;
+    }
+
+    function rem_entities( $str ) {
+        if(substr_count($str, '&') && substr_count($str, ';')) {
+          // Find amper
+          $amp_pos = strpos($str, '&');
+          //Find the ;
+          $semi_pos = strpos($str, ';');
+          // Only if the ; is after the &
+          if($semi_pos > $amp_pos) {
+            //is a HTML entity, try to remove
+            $tmp = substr($str, 0, $amp_pos);
+            $tmp = $tmp. substr($str, $semi_pos + 1, strlen($str));
+            $str = $tmp;
+            //Has another entity in it?
+            if(substr_count($str, '&') && substr_count($str, ';'))
+              $str = $this->rem_entities($tmp);
+          }
+        }
+        return $str;
+	}
+
 	private function show() {
 		global $wpdb;
 
-		$delimiter = "";
-		if ( $delimiter == "" ) {
-			$delimiter = ";";
-		}
+		$delimiter = isset($_POST['delimiter']) ? $_POST['delimiter'] : ';';
 		if ( isset( $_POST['submit'] ) ) {
 			if ( ! current_user_can( 'manage_options' ) AND ! check_admin_referer( "xlinks_add" ) ) {
 				die( 'No access!' );
 			}
-			if ( isset( $_POST['delimiter'] ) ) {
-				$delimiter = $_POST['delimiter'];
-			}
-			$updated = 0;
+			$flags = array('updated'=>0,'added'=>0);
 			// proccessing import file
 			if ( $_FILES['import_file']['tmp_name'] ) {
 				if ( ( $handle = fopen( $_FILES['import_file']['tmp_name'], "r" ) ) !== false ) {
@@ -46,25 +99,9 @@ class Import {
 						$data = trim( $data );
 						$data = iconv( 'windows-1251', 'utf-8', $data );
 						$data = preg_replace( "/&#(\d+);/", "", $data );
-						$data = xl_remEntities( $data );
-						if ( isset( $data ) ) {
-							$vals    = explode( $delimiter, $data );
-							$vals[0] = str_replace( '\"', '', $vals[0] );
-							$vals[0] = str_replace( '"', '', $vals[0] );
-							//$vals[1] = 'http://' . str_replace('http://', '', $vals[1]);
-							$count = $wpdb->get_var( "SELECT count(*) as count FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "'" );
-							if ( $count == 0 ) {
-								$sql_string = xl_return_sql( $vals );
-								if ( $sql_string ) {
-									$sql[] = $sql_string;
-								}
-							} else {
-								$id1 = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "' LIMIT 1" );
-								if ( $id1 > 0 && isset( $vals[2] ) && $vals[2] > 0 ) {
-									$wpdb->query( "UPDATE {$wpdb->prefix}xanchors SET req = req + {$vals[2]} WHERE id={$id1}" );
-									$updated ++;
-								}
-							}
+						$data = $this->rem_entities( $data );
+						if ( strlen( $data ) ) {
+							$this->add_anchor( explode( $delimiter, $data ), $flags);
 						}
 					}
 					fclose( $handle );
@@ -72,47 +109,29 @@ class Import {
 			}
 			// insert values from textarea
 			if ( $_POST['import_area'] ) {
-				$import_text = explode( "\n", $_POST['import_area'] );
-				foreach ( $import_text as $import_text_one ) {
-					$import_text_one = trim( $import_text_one );
-					if ( strlen( $import_text_one ) ) {
-						$vals    = explode( $delimiter, $import_text_one );
-						$vals[0] = str_replace( '\"', '', $vals[0] );
-						$vals[0] = str_replace( '"', '', $vals[0] );
-						#$vals[0] = mysqli_real_escape_string($vals[0]);
-						//$vals[1] = 'http://' . str_replace('http://', '', $vals[1]);
-						$count = $wpdb->get_var( "SELECT count(*) as count FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "'" );
-						if ( $count == 0 ) {
-							$sql_string = xl_return_sql( $vals );
-							if ( $sql_string ) {
-								$sql[] = $sql_string;
-							}
-						} else {
-							$id1 = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}xanchors WHERE `value` = '" . esc_sql( $vals[0] ) . "' AND `link` = '" . $vals[1] . "' LIMIT 1" );
-							if ( $id1 > 0 && isset( $vals[2] ) && $vals[2] > 0 ) {
-								$wpdb->query( "UPDATE {$wpdb->prefix}xanchors SET req = req + {$vals[2]} WHERE id={$id1}" );
-								$updated ++;
-							}
-						}
+				$data = explode( "\n", $_POST['import_area'] );
+				foreach ( $data as $row ) {
+					$row = trim( $row );
+					if ( strlen( $row ) ) {
+						$this->add_anchor( explode( $delimiter, $row ), $flags);
 					}
 				}
-
 			}
 
-			if ( isset( $sql ) && count( $sql ) ) {
-				$sql = implode( ", ", $sql );
-				$wpdb->query( "INSERT INTO {$wpdb->prefix}xanchors  (`value`, `link`, `req`) VALUES {$sql}" );
-				echo '<br /><div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Connections add.', 'xlinks' ) . '</strong></p></div>';
+			if ( $flags['added'] || $flags['updated']) {
+				if ($flags['added']){
+					echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Connections add.', $this->plugin_slug ) . '</strong></p></div>';
+				}
+    			if ( $flags['updated'] ) {
+    				echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Some records updated.', $this->plugin_slug ) . '</strong></p></div>';
+    			}
 			} else {
-				echo '<br /><div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Nothing to add.', 'xlinks' ) . '</strong></p></div>';
-			}
-			if ( $updated > 0 ) {
-				echo '<br /><div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Some records updated.', 'xlinks' ) . '</strong></p></div>';
+				echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Nothing to add.', $this->plugin_slug ) . '</strong></p></div>';
 			}
 		}
 
 		// View
-		$heading = __( 'Import', 'xlinks' );
+		$heading = __( 'Import', $this->plugin_slug );
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_import.php';
 	}
 }

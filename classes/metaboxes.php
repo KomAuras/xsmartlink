@@ -19,22 +19,18 @@ class MetaBoxes {
 	}
 
 	public function add_some_meta_box() {
-		$post_data = get_post();
-		if ( $post_data->post_link_type == "donor" ) {
-			$links  = $this->anchors->get_list( $post_data );
-			$result = "<ul>{interests_list}</ul >";
-			if ( $links[0] ) {
-				$result = str_replace( "{interests_list}", $links[0], $result );
-				add_meta_box(
-					'sea_shortcodes_meta_box',
-					$this->title,
-					array( &$this, 'render_meta_box_content' ),
-					'post',
-					'normal',
-					'high',
-					array( 'result' => $result )
-				);
-			}
+		$post = get_post();
+		$data = $this->anchors->get_post_anchor_list( $post );
+		if ( strlen($data) ) {
+			add_meta_box(
+				'sea_shortcodes_meta_box',
+				$this->title,
+				array( &$this, 'render_meta_box_content' ),
+				'post',
+				'normal',
+				'high',
+				array( 'result' => $data )
+			);
 		}
 	}
 

@@ -7,13 +7,17 @@ class Anchors {
 	private $version;
 	private $option_name;
 	private $settings;
+	private $import;
 
 	public function __construct( $plugin_slug, $version, $option_name ) {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/metaboxes.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-import.php';
+
 		$this->plugin_slug = $plugin_slug;
 		$this->version     = $version;
 		$this->option_name = $option_name;
 		$this->settings    = get_option( $this->option_name );
+		$this->import      = new Import($plugin_slug, $version, $option_name);
 	}
 
 	public function add_metaboxes() {
@@ -23,44 +27,76 @@ class Anchors {
 	public function setup_post_type() {
 		global $post;
 		if ( $post->post_type === 'post' ) {
-			echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">' . __( 'Post type:', 'xlinks' ) . ' ';
+			echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">' . __( 'Post type:', $this->plugin_slug ) . ' ';
 			echo '<input type="radio" name="post_link_type" id="post_link_type_d" value="donor" ' . checked( $post->post_link_type, 'donor', false ) . '/>';
-			echo '<label for="for="post_link_type_d" class="select-it">' . __( 'Donor', 'xlinks' ) . '</label> ';
+			echo '<label for="for="post_link_type_d" class="select-it">' . __( 'Donor', $this->plugin_slug ) . '</label> ';
 			echo '<input type="radio" name="post_link_type" id="post_link_type_a" value="acceptor" ' . checked( $post->post_link_type, 'acceptor', false ) . '/>';
-			echo '<label for="post_link_type_a" class="select-it">' . __( 'Acceptor', 'xlinks' ) . '</label>';
+			echo '<label for="post_link_type_a" class="select-it">' . __( 'Acceptor', $this->plugin_slug ) . '</label>';
 			echo '</div>';
 		}
 	}
 
-	public function get_list( $post ) {
+	// возвращает список ссылок массивом
+	private function get_post_anchors( $post ) {
 		global $wpdb;
-		$xlinks = $wpdb->get_results( "
-        SELECT
-            a.link,
-            a.value
-        FROM
-            {$wpdb->prefix}xlinks t
-            JOIN {$wpdb->prefix}xanchors a ON a.id = t.anchor_id
-        WHERE
-            t.post_id = {$post->ID}
-        " );
-		if ( count( $xlinks ) ) {
-			$xlinks_links = "";
-			foreach ( $xlinks as $xlink ) {
-				if ( Info::XLINKS_WITHOUT_LINK == true ) {
-					$xlinks_links .= "<li><b>{$xlink->value}</b> {$xlink->link}</li>";
-				} else {
-					$xlinks_links .= "<li><a href='{$xlink->link}' title='{$xlink->value}'>{$xlink->value}</a></li>";
-				}
-			}
-
-			return array( $xlinks_links, count( $xlinks ) );
-		} else {
-			return false;
-		}
+		if ( $post->post_link_type == "donor" ) {
+    		$data = $wpdb->get_results( "
+            SELECT
+                a.link,
+                a.value as text
+            FROM
+                {$wpdb->prefix}xlinks t
+                JOIN {$wpdb->prefix}xanchors a ON a.id = t.anchor_id
+            WHERE
+                t.post_id = {$post->ID}
+            ");
+            return $data;
+    	}
+    	return false;
 	}
 
-	public function on_save_post_type( $post_id ) {
+	public function get_post_anchor_list( $post ) {
+		$result = "";
+	   	$data = $this->get_post_anchors( $post );
+	   	if (is_array($data) && count($data)){
+			$result .= "<ul>";
+	   		foreach($data as $row){
+				$result .= '<li><a href="'.$row->link.'">'.$row->text.'</a></li>';
+	   		}
+			$result .= "</ul>";
+	   	}
+	   	return $result;
+	}
+
+    public function add_links_to_content( $content ){
+        if( is_single() && $this->settings['insert_in_pages'] == 1 ){
+            //load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
+	   		$data = $this->get_post_anchors( get_post() );
+	   		if (is_array($data) && count($data)){
+                $template = "
+                <hr>
+                    <p style=\"text-align: justify;\">".__('See also:',$this->plugin_slug)."</p>
+                    <ul>
+                    	{interests_list}
+                    </ul>
+                <hr>";
+                $result = '';
+    	   		foreach($data as $row){
+					if ( Info::XLINKS_WITHOUT_LINK == true ) {
+    					$result .= '<li><b>'.$row->link.'</b>'.$row->text.'</li>';
+    				} else {
+    					$result .= '<li><a href="'.$row->link.'">'.$row->text.'</a></li>';
+    				}
+    	   		}
+                $template = str_replace("{interests_list}", $result, $template );
+            	$content = $content.$template;
+            }
+        }
+        return $content;
+    }
+
+
+	public function on_save_post_type( $post_id, $post, $update ) {
 		global $wpdb;
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return false;
@@ -73,6 +109,14 @@ class Anchors {
 				'%s',
 				'%s'
 			) );
+
+			$post = get_post( $post_id );
+
+			// вызывать нужно при update == true. в ином случае пермальинк будет как для ревизии
+			if ($update == true && $this->settings['new_post_to_anchors'] == 1){
+				// todo: подумать в каком случае нужно добавлять себя в anchors
+				$this->import->post_to_anchor( $post_id );
+			}
 			if ( $link_type == "acceptor" ) {
 				$this->on_delete_post( $post_id );
 			} else {
@@ -181,7 +225,7 @@ class Anchors {
 		}
 		$posts = $wpdb->get_results( $q );
 		foreach ( $posts as $post ) {
-			_log( 'Forprocess: ' . $post->ID );
+			_log('Forprocess: ' . $post->ID );
 		}
 
 		return $posts;
@@ -193,18 +237,17 @@ class Anchors {
 			$posts = $this->get_posts_forprocess( false, $offset, $limit, $one_id );
 		} else {
 			$posts = $this->get_posts_forprocess( true, $offset, $limit );
+			shuffle( $posts );
 		}
-		#echo "<pre>";
-		shuffle( $posts );
-		#print_r($posts);
 		foreach ( $posts as $post ) {
-			#echo $post->ID."<br>";
+			$permalink = get_permalink( $post->ID );
 			$anchors = $wpdb->get_results( "
             SELECT
                 a.id,
                 a.link
             FROM
                 {$wpdb->prefix}xanchors a
+                /* количество уже привязанных постов к ссылке */
                 JOIN (SELECT
                         a.id,
                         IFNULL(COUNT(*),0) count
@@ -214,8 +257,11 @@ class Anchors {
                     GROUP BY
                         a.id) t ON t.id = a.id
             WHERE
+                /* если к ссылке привязано постов меньше чем нужно */
                 a.req > t.count
+                /* если пост еще не привязан к ссылке */
                 AND NOT EXISTS (SELECT 1 FROM {$wpdb->prefix}xlinks l WHERE l.anchor_id=a.id AND l.post_id = {$post->ID})
+                /* если пост еще не привязан к сслыке с таким же урлом (к примеру с другим словом) */
                 AND NOT EXISTS (SELECT
                                     1
                                 FROM
@@ -225,36 +271,24 @@ class Anchors {
                                 WHERE
                                     a1.id = a.id
                                     AND l.post_id = {$post->ID})
+                /* если ссылка на пост не совпадает с урлом ссылки */
+                AND a.link <> '".esc_sql($permalink)."'
             GROUP BY
                 a.link
             " );
-//            ORDER BY
-//                RAND()
-			#echo "<pre>";
 			shuffle( $anchors );
-			#echo count($anchors);
-			#print_r($anchors);
-			#exit;
+			//_log($anchors);
+			//return;
 			foreach ( $anchors as $anchor ) {
 				if ( substr( strtoupper( $anchor->link ), 0, strlen( $this->settings['local_domain'] ) ) == strtoupper( $this->settings['local_domain'] ) ) {
-#echo strtoupper($anchor->link)."<br>";
-#echo strtoupper($options['local_domain'])."<br>";
-#echo $post->l_count."<br>";
-#echo $options['local_req']."<br>";
-#echo $options['global_req']."<br>";
-					#error_log('============ '.$post->ID.' =============');
-					#error_log($post->l_count);
-					#error_log($options['local_req']);
 					if ( $post->l_count < $this->settings['local_req'] ) {
 						$post->l_count ++;
 						$wpdb->query( "INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') " );
-						#echo "Add local<br>";
 					}
 				} else {
 					if ( $post->g_count < ( $this->settings['global_req'] - $this->settings['local_req'] ) ) {
 						$post->g_count ++;
 						$wpdb->query( "INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') " );
-						#echo "Add global<br>";
 					}
 				}
 				if ( $post->g_count >= ( $this->settings['global_req'] - $this->settings['local_req'] ) && $post->l_count >= $this->settings['local_req'] ) {
@@ -262,7 +296,5 @@ class Anchors {
 				}
 			}
 		}
-		//wp_redirect(admin_url('/admin.php?page=xlinks'));
-		//exit;
 	}
 }

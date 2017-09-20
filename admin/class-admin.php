@@ -37,37 +37,35 @@ class Admin {
 	 * @return string The settings fields' HTML to be output in the view
 	 */
 	private function custom_settings_fields( $field_args, $settings ) {
-		$output = '';
+		$output = array();
 
-		$output .= '<table>';
 		foreach ( $field_args as $field ) {
 			$slug    = $field['slug'];
 			$setting = $this->option_name . '[' . $slug . ']';
 			$label   = __( $field['label'], $this->plugin_slug );
+			$text    = isset($field['text']) ? __( $field['text'], $this->plugin_slug ) : "";
 
-			$output .= '<tr>';
 			if ( $field['type'] === 'text' ) {
-				$output .= '<td><label for="' . $setting . '">' . $label . '</label></td><td>';
-				$output .= '<p><input type="text" id="' . $setting . '" name="' . $setting . '" value="' . $settings[ $slug ] . '"></p>';
-				$output .= '</td>';
+				$output[] = array(
+					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
+					'control'=> '<input type="text" id="' . $setting . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
+				);
 			} elseif ( $field['type'] === 'textarea' ) {
-				$output .= '<td><label for="' . $setting . '">' . $label . '</label></td><td>';
-				$output .= '<textarea id="' . $setting . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>';
-				$output .= '</td>';
+				$output[] = array(
+					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
+					'control'=> '<textarea id="' . $setting . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>'
+				);
 			} elseif ( $field['type'] === 'checkbox' ) {
-				$output .= '<td></td><td>';
 				$v      = '';
 				if ( $settings[ $slug ] == 1 ) {
 					$v = ' checked';
 				}
-				$output .= '<input type="checkbox" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> ';
-				$output .= '<label for="' . $setting . '">' . $label . '</label>';
-				$output .= '</td>';
+				$output[] = array(
+					'label'=> '<label for="' . $setting . '">' . $label . '</label>',
+					'control'=> '<input type="checkbox" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> '. $text
+				);
 			}
-			$output .= '</tr>';
 		}
-		$output .= '</table>';
-
 		return $output;
 	}
 
@@ -81,7 +79,6 @@ class Admin {
 	}
 
 	public function add_menus() {
-		//$plugin_name = Info::get_plugin_title();
 		add_menu_page(
 			__( 'Acceptors', $this->plugin_slug ),
 			__( 'Acceptors', $this->plugin_slug ),
@@ -117,9 +114,10 @@ class Admin {
 		// Generate the settings fields
 		$field_args = [
 			[
-				'label' => 'Add a links at the bottom Posts page',
+				'label' => 'Links in posts' . __( 'Acceptors', $this->plugin_slug ),
 				'slug'  => 'insert_in_pages',
-				'type'  => 'checkbox'
+				'type'  => 'checkbox',
+				'text'  => 'Show'
 			],
 			[
 				'label' => 'All links',
@@ -127,7 +125,7 @@ class Admin {
 				'type'  => 'text'
 			],
 			[
-				'label' => 'local links',
+				'label' => 'Local links',
 				'slug'  => 'local_req',
 				'type'  => 'text'
 			],
@@ -135,7 +133,18 @@ class Admin {
 				'label' => 'Local url',
 				'slug'  => 'local_domain',
 				'type'  => 'text'
-			]
+			],
+			[
+				'label' => 'For new posts',
+				'slug'  => 'new_post_to_anchors',
+				'type'  => 'checkbox',
+				'text'  => 'Add to anchors'
+			],
+			[
+				'label' => 'Default count for new anchor',
+				'slug'  => 'new_req',
+				'type'  => 'text'
+			],
 		];
 
 		// Model

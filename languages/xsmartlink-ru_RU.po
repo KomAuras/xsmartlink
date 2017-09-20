@@ -1,0 +1,206 @@
+# Copyright (C) 2017 WordPress
+# This file is distributed under the same license as the WordPress package.
+msgid ""
+msgstr ""
+"Project-Id-Version: xsmartlink\n"
+"Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
+"POT-Creation-Date: 2017-09-20 13:29+1000\n"
+"PO-Revision-Date: 2017-09-20 16:12+1000\n"
+"Last-Translator: \n"
+"Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Poedit-Basepath: ..\n"
+"X-Generator: Poedit 2.0.3\n"
+"X-Poedit-KeywordsList: __;_e;_n\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: languages\n"
+"X-Poedit-SearchPath-1: .\n"
+
+#: admin/class-admin.php:84 admin/class-admin.php:85
+msgid "Acceptors"
+msgstr "Акцепторы"
+
+#: admin/class-admin.php:94 admin/class-admin.php:95 admin/class-import.php:134
+msgid "Import"
+msgstr "Импорт"
+
+#: admin/class-admin.php:102 admin/class-admin.php:103
+#: admin/class-admin.php:157
+msgid "Options"
+msgstr "Настройки плагина"
+
+#: admin/class-admin.php:158
+msgid "Submit"
+msgstr ""
+
+#: admin/class-anchors.php:24
+msgid "Anchor list"
+msgstr "Список скцепторов"
+
+#: admin/class-anchors.php:30
+msgid "Post type:"
+msgstr "Вид записи:"
+
+#: admin/class-anchors.php:32 admin/partials/view_browse.php:37
+#: admin/partials/view_browse.php:50
+msgid "Donor"
+msgstr "Пост донор"
+
+#: admin/class-anchors.php:34 admin/partials/view_browse.php:36
+#: admin/partials/view_browse.php:49 admin/partials/view_browse_edit.php:16
+msgid "Acceptor"
+msgstr "Акцептор"
+
+#: admin/class-anchors.php:78
+msgid "See also:"
+msgstr "Читайте также:"
+
+#: admin/class-browse.php:86
+msgid "Forward"
+msgstr "Вперед"
+
+#: admin/class-browse.php:87 admin/partials/view_browse_edit.php:31
+#: admin/partials/view_import.php:29 admin/partials/view_options.php:22
+msgid "Back"
+msgstr "Назад"
+
+#: admin/class-browse.php:131
+msgid "Not donors yet."
+msgstr "Нет привязанных доноров."
+
+#: admin/class-browse.php:217
+msgid "Error on save. Please refer to admin!"
+msgstr "Ошибка при записи. Сообщите программисту!"
+
+#: admin/class-browse.php:223
+msgid "Edit anchor"
+msgstr "Редактирование ссылки"
+
+#: admin/class-import.php:123
+msgid "Connections add."
+msgstr "Записи добавлены."
+
+#: admin/class-import.php:126
+msgid "Some records updated."
+msgstr "Некоторые записи обновлены."
+
+#: admin/class-import.php:129
+msgid "Nothing to add."
+msgstr "Нечего добавлять."
+
+#: admin/partials/view_browse.php:7
+msgid "Relink all posts"
+msgstr "Перелинковать все"
+
+#: admin/partials/view_browse.php:9
+msgid "Find links with error 404"
+msgstr "Найти ссылки с ошибкой 404"
+
+#: admin/partials/view_browse.php:25
+msgid "Search"
+msgstr "Поиск"
+
+#: admin/partials/view_browse.php:26
+msgid "1 item"
+msgstr "1 запись"
+
+#: admin/partials/view_browse.php:35 admin/partials/view_browse.php:48
+msgid "Word"
+msgstr "Слово"
+
+#: admin/partials/view_browse.php:38 admin/partials/view_browse.php:51
+msgid "Qty"
+msgstr "Требуется связать"
+
+#: admin/partials/view_browse.php:39 admin/partials/view_browse.php:52
+msgid "Count"
+msgstr "Связано"
+
+#: admin/partials/view_browse.php:40 admin/partials/view_browse.php:53
+msgid "Error"
+msgstr "Ошибка"
+
+#: admin/partials/view_browse.php:68
+msgid "Edit"
+msgstr "Редактирование"
+
+#: admin/partials/view_browse.php:71
+msgid "Are you sure you want to delete this anchor?"
+msgstr "Вы уверены что хотите удалить эту запись?"
+
+#: admin/partials/view_browse.php:71 admin/partials/view_browse.php:93
+msgid "Delete"
+msgstr "Удалить"
+
+#: admin/partials/view_browse.php:96
+msgid "Not connections yet. You can add new."
+msgstr "База ссылок пустая. Сделайте импорт."
+
+#: admin/partials/view_browse_edit.php:9
+msgid "Anchor word"
+msgstr "Слово"
+
+#: admin/partials/view_browse_edit.php:12
+msgid "\"Word\" for link. Can be of several words."
+msgstr "\"Слово\" для ссылки. Может быть из нескольких слов."
+
+#: admin/partials/view_browse_edit.php:21
+msgid "Required qty"
+msgstr "Требуется связать"
+
+#: admin/partials/view_browse_edit.php:22
+msgid "(required)"
+msgstr "(обязательно)"
+
+#: admin/partials/view_browse_edit.php:25
+msgid "Many links will be connected with donors."
+msgstr "Столько раз нужно связать ссылку с донором."
+
+#: admin/partials/view_browse_edit.php:30
+msgid "Save"
+msgstr "Сохранить"
+
+#: admin/partials/view_import.php:8
+msgid "Select CSV file in Windows-1251 codepage"
+msgstr "Выберите файл в Windows кодировке"
+
+#: admin/partials/view_import.php:15
+msgid "Or insert here the data block"
+msgstr "Или вставьте сюда блок данных"
+
+#: admin/partials/view_import.php:17
+msgid "anchor;link;count"
+msgstr "слово;ссылка;количество"
+
+#: admin/partials/view_import.php:21
+msgid "Field delimiter"
+msgstr "Разделитель полей"
+
+#: admin/partials/view_import.php:28
+msgid "Add new connections"
+msgstr "Добавить"
+
+#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:358
+msgid "Check for updates"
+msgstr ""
+
+#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:404
+msgid "This plugin is up to date."
+msgstr ""
+
+#: includes/vendor/plugin-update-checker/Puc/v4/Plugin/UpdateChecker.php:406
+msgid "A new version of this plugin is available."
+msgstr ""
+
+#: includes/vendor/plugin-update-checker/Puc/v4/Vcs/PluginUpdateChecker.php:83
+msgid "There is no changelog available."
+msgstr ""
+
+msgid "Search Results for: %s"
+msgstr "Вот и ответ - %s"

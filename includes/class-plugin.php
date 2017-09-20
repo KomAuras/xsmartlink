@@ -5,9 +5,9 @@ namespace SmartLink;
 /**
  * The main plugin class.
  */
+
 class Plugin
 {
-
     private $loader;
     private $plugin_slug;
     private $version;
@@ -34,13 +34,19 @@ class Plugin
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'assets');
         $this->loader->add_action('admin_init', $plugin_admin, 'register_settings');
         $this->loader->add_action('admin_menu', $plugin_admin, 'add_menus');
+        $this->loader->add_action('plugins_loaded', $this, 'load_languages');
     }
 
     private function define_frontend_hooks() {
         $plugin_frontend = new Frontend($this->plugin_slug, $this->version, $this->option_name);
         $this->loader->add_action('wp_enqueue_scripts', $plugin_frontend, 'assets');
         $this->loader->add_action('wp_footer', $plugin_frontend, 'render');
+        $this->loader->add_action('plugins_loaded', $this, 'load_languages');
     }
+
+    public function load_languages() {
+     	load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
+	}
 
     public function run() {
         $this->loader->run();

@@ -42,7 +42,7 @@ class Browse {
 		// поиск 404
 		$this->loader->add_action( 'wp_ajax_process_ajax2', $this, 'process_ajax2' );
 		// при записи поста
-		$this->loader->add_action( 'save_post', $this->anchors, 'on_save_post_type' );
+		$this->loader->add_action( 'save_post', $this->anchors, 'on_save_post_type', 10, 3 );
 		// при удалении поста или перемещении в корзину
 		$this->loader->add_action( 'delete_post', $this->anchors, 'on_delete_post' );
 		$this->loader->add_action( 'wp_trash_post', $this->anchors, 'on_delete_post' );
@@ -55,6 +55,8 @@ class Browse {
 			$this->loader->add_action( 'load-post.php', $this->anchors, 'add_metaboxes' );
 			$this->loader->add_action( 'load-post-new.php', $this->anchors, 'add_metaboxes' );
 		}
+		// добавляем ссылки в конец поста
+    	$this->loader->add_filter( 'the_content', $this->anchors, 'add_links_to_content');
 		$this->loader->run();
 	}
 
@@ -81,8 +83,8 @@ class Browse {
 
 			$p = new pagination();
 			$p->items( $all_items );
-			$p->nextLabel( __( 'Forward', 'xlinks' ) );
-			$p->prevLabel( __( 'Back', 'xlinks' ) );
+			$p->nextLabel( __( 'Forward', $this->plugin_slug ) );
+			$p->prevLabel( __( 'Back', $this->plugin_slug ) );
 			$p->limit( Info::XLINKS_PER_PAGE );
 			$p->parameterName( Info::XLINKS_PAGE_KEY );
 			$p->target( "?page=xsmartlink_list" );
@@ -126,7 +128,7 @@ class Browse {
 				$donors_html .= "<a href='" . get_permalink( $donor->ID ) . "' target='_blank'>" . $donor->ID . "</a> ";
 			}
 			if ( ! $donors_html ) {
-				$donors_html = __( "Not donors yet.", 'xlinks' );
+				$donors_html = __( "Not donors yet.", $this->plugin_slug );
 			}
 			$items[] = array(
 				'id'       => $anchor->id,
@@ -212,13 +214,13 @@ class Browse {
 				$edit_row->value = $edit_value;
 				$edit_row->link  = $edit_link;
 				$edit_row->req   = $edit_required;
-				echo '<br /><div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Error on save. Please refer to admin!', 'xlinks' ) . '</strong></p></div>';
+				echo '<br /><div id="setting-error-settings_updated" class="updated settings-error"><p><strong>' . __( 'Error on save. Please refer to admin!', $this->plugin_slug ) . '</strong></p></div>';
 			}
 		} else {
 			$edit_row = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}xanchors WHERE id={$id}" );
 		}
 		// View
-		$heading = __( 'Edit anchor', 'xlinks' );
+		$heading = __( 'Edit anchor', $this->plugin_slug );
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_browse_edit.php';
 	}
 
@@ -278,7 +280,6 @@ class Browse {
 	 *  Проверка всех ссылок на наличие и выставление ошибки
 	 */
 	public function process_ajax2() {
-		_log( 'process_ajax1' );
 		$records = intval( $_POST['records'] );
 		if ( $records == 0 ) {
 			$anchors = $this->anchors->get_anchors_forprocess();

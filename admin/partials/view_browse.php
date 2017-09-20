@@ -4,9 +4,9 @@
 	<? if ( $all_items || ( isset( $xlinks_search ) && $xlinks_search != '' ) ) { ?>
         <p>
             <a href="#" id="xl_relink_button" class="button button-primary"
-               onclick="xsml_process_relinks_js1();"><?= _e( 'Relink all posts', 'xlinks' ) ?></a>
+               onclick="xsml_process_relinks_js1();"><?= _e( 'Relink all posts', $this->plugin_slug ) ?></a>
             <a href="#" id="xl_delete404_button" class="button button-primary"
-               onclick="xsml_process_relinks_js2();"><?= _e( 'Find links with error 404', 'xlinks' ) ?></a>
+               onclick="xsml_process_relinks_js2();"><?= _e( 'Find links with error 404', $this->plugin_slug ) ?></a>
         </p>
         <div id="progressbar" style="display: none;">
             <div class="value"></div>
@@ -23,7 +23,7 @@
                     <input type="text" name="xlinks_search" id="xlinks_search"
                            value="<?php isset( $xlinks_search ) ? $xlinks_search : ""; ?>">
                     <button class="button"><?= _e( 'Search' ) ?></button>
-                    <span class="displaying-num"><?= sprintf( _n( '1 item', '%s items', $all_items, 'xlinks' ), number_format_i18n( $all_items ) ); ?></span>
+                    <span class="displaying-num"><?= sprintf( _n( '1 item', '%s items', $all_items, $this->plugin_slug ), number_format_i18n( $all_items ) ); ?></span>
                 </div>
             </div>
             <table class="widefat fixed page" cellspacing="0">
@@ -32,12 +32,12 @@
                     <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><label
                                 class="screen-reader-text" for="cb-select-all-1">Select all</label><input
                                 id="cb-select-all-1" type="checkbox"></th>
-                    <th scope="col"><span><?= _e( 'Word', 'xlinks' ) ?></span></a></th>
-                    <th scope="col" width="30%"><?= _e( 'Acceptor', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Donor', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Qty', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Count', 'xlinks' ) ?></th>
-                    <th scope="col" WIDTH="5%" NOWRAP><?= _e( 'Error', 'xlinks' ) ?></th>
+                    <th scope="col"><span><?= _e( 'Word', $this->plugin_slug ) ?></span></a></th>
+                    <th scope="col" width="30%"><?= _e( 'Acceptor', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Qty', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
+                    <th scope="col" WIDTH="5%" NOWRAP><?= _e( 'Error', $this->plugin_slug ) ?></th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -45,12 +45,12 @@
                     <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><label
                                 class="screen-reader-text" for="cb-select-all-1">Select all</label><input
                                 id="cb-select-all-1" type="checkbox"></th>
-                    <th scope="col"><span><?= _e( 'Word', 'xlinks' ) ?></span></a></th>
-                    <th scope="col" width="30%"><?= _e( 'Acceptor', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Donor', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Qty', 'xlinks' ) ?></th>
-                    <th scope="col"><?= _e( 'Count', 'xlinks' ) ?></th>
-                    <th scope="col" WIDTH="5%" NOWRAP><?= _e( 'Error', 'xlinks' ) ?></th>
+                    <th scope="col"><span><?= _e( 'Word', $this->plugin_slug ) ?></span></a></th>
+                    <th scope="col" width="30%"><?= _e( 'Acceptor', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Qty', $this->plugin_slug ) ?></th>
+                    <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
+                    <th scope="col" WIDTH="5%" NOWRAP><?= _e( 'Error', $this->plugin_slug ) ?></th>
                 </tr>
                 </tfoot>
                 <tbody id="the-comment-list" data-wp-lists="list:comment">
@@ -68,7 +68,7 @@
                                             href="?page=xsmartlink_list&amp;id=<?= $item['id'] ?>&amp;edit=true"><?= _e( 'Edit' ) ?></a> | </span>
                                 <span class="delete"><a
                                             href="?page=xsmartlink_list&amp;_wpnonce=<?= wp_create_nonce( 'delete' ); ?>&amp;delete=<?= $item['id'] ?>"
-                                            onclick="return confirm('<?= _e( 'Are you sure you want to delete this anchor?', 'xlinks' ) ?>');"><?= _e( 'Delete' ) ?></a></span>
+                                            onclick="return confirm('<?= _e( 'Are you sure you want to delete this anchor?', $this->plugin_slug ) ?>');"><?= _e( 'Delete' ) ?></a></span>
                             </div>
                         </td>
                         <td><a href="<?= $item['link'] ?>" target="_blank"><?= $item['link'] ?></td>
@@ -93,7 +93,7 @@
             <p><input type="submit" name="delete_all" class="button action" value="<?= _e( 'Delete' ) ?>"/></p>
         </form>
 	<? } else { ?>
-        <p><?= _e( 'Not connections yet. You can add new.', 'xlinks' ) ?></p>
+        <p><?= _e( 'Not connections yet. You can add new.', $this->plugin_slug ) ?></p>
 	<? } ?>
 
 </div>
