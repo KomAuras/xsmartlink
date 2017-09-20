@@ -13,10 +13,12 @@ class Admin {
 	private $settings_group;
 	private $browse;
 	private $import;
+	private $anchors;
 
 	public function __construct( $plugin_slug, $version, $option_name ) {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-browse.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-import.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-anchors.php';
 
 		$this->plugin_slug    = $plugin_slug;
 		$this->version        = $version;
@@ -26,6 +28,7 @@ class Admin {
 
 		$this->browse = new Browse( $this->plugin_slug, $this->version, $this->option_name );
 		$this->import = new Import( $this->plugin_slug, $this->version, $this->option_name );
+		$this->anchors = new Anchors( $this->plugin_slug, $this->version, $this->option_name );
 	}
 
 	/**
@@ -79,6 +82,8 @@ class Admin {
 	}
 
 	public function add_menus() {
+     	//$translations = get_translations_for_domain( $this->plugin_slug );
+		//print_r($translations->entries);
 		add_menu_page(
 			__( 'Acceptors', $this->plugin_slug ),
 			__( 'Acceptors', $this->plugin_slug ),
@@ -95,6 +100,22 @@ class Admin {
 			'manage_options',
 			$this->plugin_slug . '_import',
 			[ $this->import, 'render' ]
+		);
+		add_submenu_page(
+			$this->plugin_slug . '_list',
+			__( 'Export', $this->plugin_slug ),
+			__( 'Export', $this->plugin_slug ),
+			'manage_options',
+			$this->plugin_slug . '_export',
+			[ $this->import, 'export' ]
+		);
+		add_submenu_page(
+			$this->plugin_slug . '_list',
+			__( 'Stat', $this->plugin_slug ),
+			__( 'Stat', $this->plugin_slug ),
+			'manage_options',
+			$this->plugin_slug . '_stat',
+			[ $this->anchors, 'render' ]
 		);
 		add_submenu_page(
 			$this->plugin_slug . '_list',

@@ -11,18 +11,66 @@ class Import {
 	private $option_name;
 	private $settings;
 	private $settings_group;
+	private $loader;
 
 	public function __construct( $plugin_slug, $version, $option_name ) {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-loader.php';
+
 		$this->plugin_slug    = $plugin_slug;
 		$this->version        = $version;
 		$this->option_name    = $option_name;
 		$this->settings       = get_option( $this->option_name );
 		$this->settings_group = $this->option_name . '_group';
+		$this->loader = new Loader();
+		$this->define_hooks();
 	}
+
+	public function define_hooks() {
+		// процесс экспорта
+		$this->loader->add_action( 'wp_loaded', $this, 'export_process' );
+		$this->loader->run();
+	}
+
 
 	public function render() {
 		$this->show();
 	}
+
+	public function export() {
+
+		// View
+		$heading = __( 'Export', $this->plugin_slug );
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_export.php';
+	}
+
+	public function export_process()
+    {
+		if ( isset( $_POST['action'] ) && $_POST['action'] == 'export_process' && isset( $_POST['submit'] ) ) {
+            if( !current_user_can( 'manage_options' ) AND !check_admin_referer( "xlinks_export" ) ){
+                die( 'No access!' );
+            }
+            global $wpdb;
+            $anchors = $wpdb->get_results("
+                SELECT
+                    a.value, a.link, a.req
+                FROM
+                    {$wpdb->prefix}xanchors a
+                ");
+            header("Expires: Mon, 1 Apr 1974 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Pragma: no-cache");
+            header("Content-type: application/CSV");
+            header("Content-Disposition: attachment; filename=export.csv");
+            foreach ($anchors as $anchor){
+                echo iconv('utf-8', 'windows-1251', $anchor->value).";";
+                echo iconv('utf-8', 'windows-1251', $anchor->link).";";
+                echo iconv('utf-8', 'windows-1251', $anchor->req)."\n";
+            }
+            exit;
+        }
+	}
+
 
 	public function post_to_anchor( $post_id ) {
 		$post = get_post( $post_id );

@@ -20,6 +20,29 @@ class Anchors {
 		$this->import      = new Import($plugin_slug, $version, $option_name);
 	}
 
+	public function render() {
+        global $wpdb;
+        $donors    = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'donor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
+        $acceptors = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'acceptor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
+        $g_links   = $wpdb->get_var( "SELECT sum(gl.count) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
+        $l_links   = $wpdb->get_var( "SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id" );
+        //$g_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link NOT LIKE '{$options['local_domain']}%'" );
+        //$l_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$options['local_domain']}%'" );
+        $gl1 = $this->settings['global_req']-$this->settings['local_req'];
+        if ($gl1 > 0)
+            $need_g_links = ($donors-($g_links / $gl1))*($this->settings['global_req']-$this->settings['local_req']);
+        else
+            $need_g_links = 0;
+        if ($this->settings['local_req'] > 0)
+            $need_l_links = ($donors-($l_links / $this->settings['local_req']))*$this->settings['local_req'];
+        else
+            $need_l_links = 0;
+
+		// View
+		$heading = __( 'Stat', $this->plugin_slug );
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_stat.php';
+	}
+
 	public function add_metaboxes() {
 		return new MetaBoxes( __( 'Anchor list' ), $this );
 	}

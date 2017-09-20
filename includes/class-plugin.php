@@ -45,7 +45,7 @@ class Plugin
     }
 
     public function load_languages() {
-     	load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
+     	load_plugin_textdomain($this->plugin_slug, false, $this->plugin_slug.'/languages/' );
 	}
 
     public function run() {

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
 "POT-Creation-Date: 2017-09-20 13:29+1000\n"
-"PO-Revision-Date: 2017-09-20 16:12+1000\n"
+"PO-Revision-Date: 2017-09-20 17:24+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -96,7 +96,7 @@ msgstr "Нечего добавлять."
 
 #: admin/partials/view_browse.php:7
 msgid "Relink all posts"
-msgstr "Перелинковать все"
+msgstr "Перелинковать все ссылки"
 
 #: admin/partials/view_browse.php:9
 msgid "Find links with error 404"

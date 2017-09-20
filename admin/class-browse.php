@@ -142,7 +142,7 @@ class Browse {
 		}
 
 		// View
-		$heading = Info::get_plugin_title();
+		$heading = __('Manage links',$this->plugin_slug);
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_browse.php';
 	}
 
