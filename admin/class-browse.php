@@ -57,6 +57,10 @@ class Browse {
 		}
 		// добавляем ссылки в конец поста
 		$this->loader->add_filter( 'the_content', $this->anchors, 'add_links_to_content' );
+		// добавляем столбец в посты
+		$this->loader->add_filter( 'manage_posts_columns', $this->anchors, 'xsl_columns_head');
+		// показываем данные в столбце
+		$this->loader->add_action( 'manage_posts_custom_column', $this->anchors, 'xsl_columns_content', 10, 2);
 		$this->loader->run();
 	}
 
@@ -114,27 +118,24 @@ class Browse {
 		$items   = array();
 
 		foreach ( $anchors as $anchor ) {
-			$donors_html = "";
-			$donors      = $wpdb->get_results( "
+			$links = array();
+			$data      = $wpdb->get_results( "
                 SELECT
-                    p.ID, p.guid, p.post_title
+                    p.ID /* , p.guid, p.post_title */
                 FROM
                     {$wpdb->prefix}xlinks l
                     LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id
                 WHERE
                     l.anchor_id={$anchor->id}
                 " );
-			foreach ( $donors as $donor ) {
-				$donors_html .= "<a href='" . get_permalink( $donor->ID ) . "' target='_blank'>" . $donor->ID . "</a> ";
-			}
-			if ( ! $donors_html ) {
-				$donors_html = __( "Not donors yet.", $this->plugin_slug );
+			foreach ( $data as $row ) {
+				$links[] = array('ID'=>$row->ID, 'link'=>get_permalink( $row->ID ));
 			}
 			$items[] = array(
 				'id'       => $anchor->id,
 				'anchor'   => $anchor->value,
 				'link'     => urldecode( $this->idna->decode( $anchor->link ) ),
-				'donors'   => $donors_html,
+				'donors'   => $links,
 				'req'      => $anchor->req,
 				'count'    => $anchor->count,
 				'error404' => $anchor->error404,

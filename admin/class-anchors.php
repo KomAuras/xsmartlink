@@ -20,6 +20,44 @@ class Anchors {
 		$this->import      = new Import( $plugin_slug, $version, $option_name );
 	}
 
+    // Add posts column
+    function xsl_columns_head($defaults) {
+        $defaults['anchors'] = __('Number of links',$this->plugin_slug);
+        return $defaults;
+    }
+
+    // Show column data
+    function xsl_columns_content($column_name, $post_ID) {
+		global $wpdb;
+      	$result = "";
+        if ($column_name == 'anchors') {
+        	$post = get_post( $post_ID );
+        	$result .= $post->post_link_type == "donor" ? "":__('Acceptor',$this->plugin_slug);
+        	$all = 0;
+        	$local = 0;
+    		if ( $post->post_link_type == "donor" ) {
+    			$data = $wpdb->get_results( "
+                SELECT
+                    a.link
+                FROM
+                    {$wpdb->prefix}xlinks t
+                    JOIN {$wpdb->prefix}xanchors a ON a.id = t.anchor_id
+                WHERE
+                    t.post_id = {$post->ID}
+                " );
+                foreach($data as $row){
+                   	$pos = mb_strpos($row->link, $this->settings['local_domain']);
+                   	if ($pos!==false && $pos==0){
+                   		$local++;
+                   	}
+               		$all++;
+                }
+       			$result .= '<kbd>' . $all . ($local>0 ? ' (&#x2605;'.$local.')' : '') . '</kbd>';
+    		}
+        	echo $result;
+        }
+    }
+
 	public function render() {
 		global $wpdb;
 		$donors    = $wpdb->get_var( "SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'donor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')" );
@@ -46,7 +84,7 @@ class Anchors {
 	}
 
 	public function add_metaboxes() {
-		return new MetaBoxes( __( 'Anchor list' ), $this );
+		return new MetaBoxes( __( 'Anchor list',$this->plugin_slug ), $this );
 	}
 
 	public function setup_post_type() {
@@ -88,7 +126,12 @@ class Anchors {
 		if ( is_array( $data ) && count( $data ) ) {
 			$result .= "<ul>";
 			foreach ( $data as $row ) {
-				$result .= '<li><a href="' . $row->link . '">' . $row->text . '</a></li>';
+               	$pos = mb_strpos($row->link, $this->settings['local_domain']);
+               	$local = "";
+               	if ($pos!==false && $pos==0){
+               		$local .= "&#x2605; ";
+               	}
+				$result .= '<li>'.$local.'<a href="' . $row->link . '">' . $row->text . '</a></li>';
 			}
 			$result .= "</ul>";
 		}
@@ -226,7 +269,14 @@ class Anchors {
 
 	public function get_posts_forprocess( $getcnt, $offset = 0, $limit = Info::XLINKS_PER_RECORD, $one_id = 0 ) {
 		global $wpdb;
-		$q = "SELECT
+		// запрос возвращает номер поста и количество привязанных к нему
+		// ссылок, внешних и локальных. тип ссылок определяется по LIKE
+		// WHERE
+		// для опубликованнх или запланированнх постов
+		// и если общее количество ссылок меньше максимального количества из настроек
+		// TODO: На будушее нужно сделать возможность пересчитать количество привязанных ссылок в соответствии с настройками
+		$q = "
+		SELECT
             t.ID,
             t.g_count,
             t.l_count
@@ -243,8 +293,9 @@ class Anchors {
             ) t ON t.ID = p.ID
         WHERE
             p.post_type = 'post'
-            AND (p.post_status = 'publish' OR p.post_status = 'future')";
-		//AND (t.g_count + t.l_count) <> {$options['global_req']}";
+            AND (p.post_status = 'publish' OR p.post_status = 'future')
+			AND (t.g_count + t.l_count) < {$this->settings['global_req']}
+        ";
 		if ( $one_id > 0 ) {
 			$q .= " AND p.ID = {$one_id}";
 		}
@@ -252,15 +303,17 @@ class Anchors {
 			$q .= " LIMIT {$offset},{$limit}";
 		}
 		$posts = $wpdb->get_results( $q );
+		/*
 		foreach ( $posts as $post ) {
-			_log( 'Forprocess: ' . $post->ID );
+			_log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
 		}
-
+		*/
 		return $posts;
 	}
 
 	public function relink( $offset, $limit = Info::XLINKS_PER_RECORD, $one_id = 0 ) {
 		global $wpdb;
+		//_log('offset: ' . $offset . ' limit: ' . $limit . ' one_id: ' . $one_id);
 		if ( $one_id > 0 ) {
 			$posts = $this->get_posts_forprocess( false, $offset, $limit, $one_id );
 		} else {
@@ -272,24 +325,25 @@ class Anchors {
 			$anchors   = $wpdb->get_results( "
             SELECT
                 a.id,
-                a.link
+                a.link,
+                a.req,
+                t.count
             FROM
                 {$wpdb->prefix}xanchors a
                 /* количество уже привязанных постов к ссылке */
-                JOIN (SELECT
-                        a.id,
-                        IFNULL(COUNT(*),0) count
+                LEFT JOIN (SELECT
+                        anchor_id as id,
+                        COUNT(*) count
                     FROM
-                        {$wpdb->prefix}xanchors a
-                        LEFT JOIN {$wpdb->prefix}xlinks l ON l.anchor_id = a.id
+                        {$wpdb->prefix}xlinks
                     GROUP BY
-                        a.id) t ON t.id = a.id
+                        anchor_id) t ON t.id = a.id
             WHERE
                 /* если к ссылке привязано постов меньше чем нужно */
-                a.req > t.count
+                a.req > IFNULL(t.count,0)
                 /* если пост еще не привязан к ссылке */
                 AND NOT EXISTS (SELECT 1 FROM {$wpdb->prefix}xlinks l WHERE l.anchor_id=a.id AND l.post_id = {$post->ID})
-                /* если пост еще не привязан к сслыке с таким же урлом (к примеру с другим словом) */
+                /* если пост еще не привязан к сcылке с таким же урлом (к примеру с другим словом) */
                 AND NOT EXISTS (SELECT
                                     1
                                 FROM
@@ -305,8 +359,11 @@ class Anchors {
                 a.link
             " );
 			shuffle( $anchors );
-			//_log($anchors);
-			//return;
+			/*
+			_log('------- for post: ' . $post->ID . ' -------');
+			_log($anchors);
+			return;
+			*/
 			foreach ( $anchors as $anchor ) {
 				if ( substr( strtoupper( $anchor->link ), 0, strlen( $this->settings['local_domain'] ) ) == strtoupper( $this->settings['local_domain'] ) ) {
 					if ( $post->l_count < $this->settings['local_req'] ) {

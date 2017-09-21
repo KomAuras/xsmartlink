@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2017-09-20 21:42+1000\n"
-"PO-Revision-Date: 2017-09-20 21:43+1000\n"
+"POT-Creation-Date: 2017-09-21 12:09+1000\n"
+"PO-Revision-Date: 2017-09-21 12:16+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -16,131 +16,135 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Poedit-Basepath: ..\n"
-"X-Generator: Poedit 2.0.1\n"
-"X-Poedit-KeywordsList: __;_e;_n\n"
+"X-Generator: Poedit 2.0.3\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: languages\n"
 "X-Poedit-SearchPath-1: .\n"
 "X-Poedit-SearchPathExcluded-0: includes/vendor/plugin-update-checker\n"
 
-#: admin/class-admin.php:36
+#: admin/class-admin.php:37
 msgid "Settings"
 msgstr "Настройки"
 
-#: admin/class-admin.php:89
+#: admin/class-admin.php:90
 msgid "All links checked!"
 msgstr "Все ссылки проверены!"
 
-#: admin/class-admin.php:90
+#: admin/class-admin.php:91
 msgid "All links linked!"
 msgstr "Перелинковка выполнена!"
 
-#: admin/class-admin.php:103 admin/class-admin.php:104
+#: admin/class-admin.php:104 admin/class-admin.php:105
 #: admin/partials/view_stat.php:13
 msgid "Acceptors"
 msgstr "Акцепторы"
 
-#: admin/class-admin.php:113 admin/class-admin.php:114
+#: admin/class-admin.php:114 admin/class-admin.php:115
 #: admin/class-import.php:187
 msgid "Import"
 msgstr "Импорт"
 
-#: admin/class-admin.php:121 admin/class-admin.php:122
+#: admin/class-admin.php:122 admin/class-admin.php:123
 #: admin/class-import.php:41 admin/partials/view_export.php:11
 msgid "Export"
 msgstr "Экспорт"
 
-#: admin/class-admin.php:129 admin/class-admin.php:130
-#: admin/class-anchors.php:44
+#: admin/class-admin.php:130 admin/class-admin.php:131
+#: admin/class-anchors.php:90
 msgid "Stat"
 msgstr "Статистика"
 
-#: admin/class-admin.php:137 admin/class-admin.php:138
-#: admin/class-admin.php:192
+#: admin/class-admin.php:138 admin/class-admin.php:139
+#: admin/class-admin.php:193
 msgid "Options"
 msgstr "Настройки плагина"
 
-#: admin/class-admin.php:153
+#: admin/class-admin.php:154
 msgid "Links in posts"
 msgstr "Добавлять ссылки в конец страницы"
 
-#: admin/class-admin.php:156
+#: admin/class-admin.php:157
 msgid "Show"
 msgstr "Выводить"
 
-#: admin/class-admin.php:159
+#: admin/class-admin.php:160
 msgid "All links"
 msgstr "Общее количество ссылок на странице доноре"
 
-#: admin/class-admin.php:164
+#: admin/class-admin.php:165
 msgid "Local links"
 msgstr "Количество локальных ссылок на странице доноре"
 
-#: admin/class-admin.php:169
+#: admin/class-admin.php:170
 msgid "Local url"
 msgstr "Имя локального домена"
 
-#: admin/class-admin.php:174
+#: admin/class-admin.php:175
 msgid "For new posts"
 msgstr "Новые записи"
 
-#: admin/class-admin.php:177
+#: admin/class-admin.php:178
 msgid "Add to anchors"
 msgstr "Добавлять в список ссылок"
 
-#: admin/class-admin.php:180
-#, fuzzy
-msgid "Default count for new anchor"
+#: admin/class-admin.php:181
+msgid "Default count for new anchor (default)"
 msgstr "Количество связей для ссылок (по умолчанию)"
 
-#: admin/class-admin.php:193
+#: admin/class-admin.php:194
 msgid "Submit"
 msgstr "Отправить"
 
-#: admin/class-anchors.php:49
-msgid "Anchor list"
-msgstr "Список скцепторов"
+#: admin/class-anchors.php:33
+msgid "Number of links"
+msgstr "Количество ссылок"
 
-#: admin/class-anchors.php:55
+#: admin/class-anchors.php:43 admin/class-anchors.php:105
+#: admin/partials/view_browse.php:36 admin/partials/view_browse.php:49
+#: admin/partials/view_browse_edit.php:16
+msgid "Acceptor"
+msgstr "Акцептор"
+
+#: admin/class-anchors.php:95
+msgid "Anchor list"
+msgstr "Список ссылок"
+
+#: admin/class-anchors.php:101
 msgid "Post type:"
 msgstr "Вид записи:"
 
-#: admin/class-anchors.php:57 admin/partials/view_browse.php:37
+#: admin/class-anchors.php:103 admin/partials/view_browse.php:37
 #: admin/partials/view_browse.php:50
 msgid "Donor"
 msgstr "Пост донор"
 
-#: admin/class-anchors.php:59 admin/partials/view_browse.php:36
-#: admin/partials/view_browse.php:49 admin/partials/view_browse_edit.php:16
-msgid "Acceptor"
-msgstr "Акцептор"
-
-#: admin/class-anchors.php:106
+#: admin/class-anchors.php:157
 msgid "See also:"
 msgstr "Читайте также:"
 
-#: admin/class-browse.php:86
+#: admin/class-browse.php:90
 msgid "Forward"
 msgstr "Вперед"
 
-#: admin/class-browse.php:87 admin/partials/view_browse_edit.php:32
+#: admin/class-browse.php:91 admin/partials/view_browse_edit.php:32
 #: admin/partials/view_import.php:30 admin/partials/view_options.php:23
 msgid "Back"
 msgstr "Назад"
 
-#: admin/class-browse.php:131
+#: admin/class-browse.php:140
 msgid "Not donors yet."
 msgstr "Нет привязанных доноров."
 
-#: admin/class-browse.php:145
+#: admin/class-browse.php:154
 msgid "Manage links"
 msgstr "Управление ссылками"
 
-#: admin/class-browse.php:217
+#: admin/class-browse.php:226
 msgid "Error on save. Please refer to admin!"
 msgstr "Ошибка при записи. Сообщите программисту!"
 
-#: admin/class-browse.php:223
+#: admin/class-browse.php:232
 msgid "Edit anchor"
 msgstr "Редактирование ссылки"
 
@@ -169,8 +173,11 @@ msgid "Search"
 msgstr "Поиск"
 
 #: admin/partials/view_browse.php:26
-msgid "1 item"
-msgstr "1 запись"
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] "%s запись"
+msgstr[1] "%s записи"
+msgstr[2] "%s записей"
 
 #: admin/partials/view_browse.php:35 admin/partials/view_browse.php:48
 msgid "Word"
@@ -196,11 +203,11 @@ msgstr "Редактирование"
 msgid "Are you sure you want to delete this anchor?"
 msgstr "Вы уверены что хотите удалить эту запись?"
 
-#: admin/partials/view_browse.php:71 admin/partials/view_browse.php:93
+#: admin/partials/view_browse.php:71 admin/partials/view_browse.php:98
 msgid "Delete"
 msgstr "Удалить"
 
-#: admin/partials/view_browse.php:96
+#: admin/partials/view_browse.php:101
 msgid "Not connections yet. You can add new."
 msgstr "База ссылок пустая. Сделайте импорт."
 
@@ -271,6 +278,3 @@ msgstr "Внешних ссылок"
 #: admin/partials/view_stat.php:24
 msgid "Need local links"
 msgstr "Локальных ссылок"
-
-#~ msgid "All links checked"
-#~ msgstr "Поиск выполнен"

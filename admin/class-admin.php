@@ -177,7 +177,7 @@ class Admin {
 				'text'  => __( 'Add to anchors', $this->plugin_slug ),
 			],
 			[
-				'label' => __( 'Default count for new anchor', $this->plugin_slug ),
+				'label' => __( 'Default count for new anchor (default)', $this->plugin_slug ),
 				'slug'  => 'new_req',
 				'type'  => 'text'
 			],

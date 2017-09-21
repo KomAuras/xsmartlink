@@ -13,6 +13,13 @@
 
     $(document).ready(function () {
         showSpinner();
+        $('td.more_posts').hover(function (event) {
+        	$(this).find('span.more_posts_s').hide();
+        	$(this).find('span.more_posts_h').show();
+        },function (event) {
+        	$(this).find('span.more_posts_h').hide();
+        	$(this).find('span.more_posts_s').show();
+        });
     });
 
 })(jQuery);
