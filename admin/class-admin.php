@@ -68,7 +68,7 @@ class Admin {
 				);
 			} elseif ( $field['type'] === 'checkbox' ) {
 				$v = '';
-				if ( $settings[ $slug ] == 1 ) {
+				if ( isset($settings[ $slug ]) && $settings[ $slug ] == 1 ) {
 					$v = ' checked';
 				}
 				$output[] = array(

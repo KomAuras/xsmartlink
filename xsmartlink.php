@@ -41,11 +41,12 @@ $update_url      = Info::UPDATE_URL;
 $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
     $update_url.$plugin_slug,
     __FILE__,
-    'unique-plugin-or-theme-slug'
+    $plugin_slug
 );
 
 //Optional: If you're using a private repository, create an OAuth consumer
 //and set the authentication credentials like this:
+
 $myUpdateChecker->setAuthentication(array(
     'consumer_key' => Info::CONSUMER_KEY,
     'consumer_secret' => Info::CONSUMER_SECRET,

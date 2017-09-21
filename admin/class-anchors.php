@@ -120,17 +120,19 @@ class Anchors {
 		return false;
 	}
 
-	public function get_post_anchor_list( $post ) {
+	public function get_post_anchor_list( $post, $mark_local=true ) {
 		$result = "";
 		$data   = $this->get_post_anchors( $post );
 		if ( is_array( $data ) && count( $data ) ) {
 			$result .= "<ul>";
 			foreach ( $data as $row ) {
-               	$pos = mb_strpos($row->link, $this->settings['local_domain']);
                	$local = "";
-               	if ($pos!==false && $pos==0){
-               		$local .= "&#x2605; ";
-               	}
+               	if ($mark_local){
+	               	$pos = mb_strpos($row->link, $this->settings['local_domain']);
+    	           	if ($pos!==false && $pos==0){
+        	       		$local .= "&#x2605; ";
+            	   	}
+            	}
 				$result .= '<li>'.$local.'<a href="' . $row->link . '">' . $row->text . '</a></li>';
 			}
 			$result .= "</ul>";
@@ -140,7 +142,7 @@ class Anchors {
 	}
 
 	public function add_links_to_content( $content ) {
-		if ( is_single() && $this->settings['insert_in_pages'] == 1 ) {
+		if ( is_single() && isset($this->settings['insert_in_pages']) && $this->settings['insert_in_pages'] == 1 ) {
 			//load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
 			$data = $this->get_post_anchors( get_post() );
 			if ( is_array( $data ) && count( $data ) ) {
@@ -184,7 +186,7 @@ class Anchors {
 			$post = get_post( $post_id );
 
 			// вызывать нужно при update == true. в ином случае пермальинк будет как для ревизии
-			if ( $update == true && $this->settings['new_post_to_anchors'] == 1 ) {
+			if ( $update == true && isset($this->settings['new_post_to_anchors']) && $this->settings['new_post_to_anchors'] == 1 ) {
 				// todo: подумать в каком случае нужно добавлять себя в anchors
 				$this->import->post_to_anchor( $post_id );
 			}

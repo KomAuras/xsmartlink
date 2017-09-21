@@ -13,6 +13,8 @@ class Plugin {
 	private $option_name;
 
 	public function __construct() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/widget.php';
+
 		$this->plugin_slug = Info::SLUG;
 		$this->version     = Info::VERSION;
 		$this->option_name = Info::OPTION_NAME;
@@ -35,6 +37,7 @@ class Plugin {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menus' );
 		$this->loader->add_filter( 'plugin_action_links', $plugin_admin, 'link_to_plugin_config', 10, 2 );
 		$this->loader->add_action( 'plugins_loaded', $this, 'load_languages' );
+	    $this->loader->add_action( 'widgets_init', $this, 'load_widgets' );
 	}
 
 	private function define_frontend_hooks() {
@@ -42,7 +45,12 @@ class Plugin {
 //		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'assets' );
 //		$this->loader->add_action( 'wp_footer', $plugin_frontend, 'render' );
 		$this->loader->add_action( 'plugins_loaded', $this, 'load_languages' );
+	    $this->loader->add_action( 'widgets_init', $this, 'load_widgets' );
 	}
+
+    function load_widgets() {
+        register_widget( 'SmartLink\xsmartlink_widget' );
+    }
 
 	public function load_languages() {
 		load_plugin_textdomain( $this->plugin_slug, false, $this->plugin_slug . '/languages/' );
