@@ -194,8 +194,6 @@ if ( !class_exists('Puc_v4p2_Vcs_BitBucketApi', false) ):
 				$this->repository,
 				ltrim($url, '/')
 			));
-		    echo($url);
-		    die();
 
 			if ( $this->oauth ) {
 				$url = $this->oauth->sign($url,'GET');
