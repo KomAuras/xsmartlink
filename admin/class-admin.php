@@ -55,16 +55,22 @@ class Admin {
 			$setting = $this->option_name . '[' . $slug . ']';
 			$label   = __( $field['label'], $this->plugin_slug );
 			$text    = isset( $field['text'] ) ? __( $field['text'], $this->plugin_slug ) : "";
+			$class   = $field['class'];
 
 			if ( $field['type'] === 'text' ) {
 				$output[] = array(
 					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
-					'control' => '<input type="text" id="' . $setting . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
+					'control' => '<input type="text" id="' . $setting . '" class="' . $class . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
+				);
+			} elseif ( $field['type'] === 'number' ) {
+				$output[] = array(
+					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
+					'control' => '<input min="0" step="1" type="number" id="' . $setting . '" class="' . $class . '" name="' . $setting . '" value="' . $settings[ $slug ] . '">'
 				);
 			} elseif ( $field['type'] === 'textarea' ) {
 				$output[] = array(
 					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
-					'control' => '<textarea id="' . $setting . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>'
+					'control' => '<textarea id="' . $setting . '" class="' . $class . '" name="' . $setting . '" rows="10">' . $settings[ $slug ] . '</textarea>'
 				);
 			} elseif ( $field['type'] === 'checkbox' ) {
 				$v = '';
@@ -73,7 +79,7 @@ class Admin {
 				}
 				$output[] = array(
 					'label'   => '<label for="' . $setting . '">' . $label . '</label>',
-					'control' => '<input type="checkbox" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> ' . $text
+					'control' => '<input type="checkbox" class="' . $class . '" id="' . $setting . '" name="' . $setting . '" value="1"' . $v . '> ' . $text
 				);
 			}
 		}
@@ -154,32 +160,38 @@ class Admin {
 				'slug'  => 'insert_in_pages',
 				'type'  => 'checkbox',
 				'text'  => __( 'Show', $this->plugin_slug ),
+				'class' => '',
 			],
 			[
 				'label' => __( 'All links', $this->plugin_slug ),
 				'slug'  => 'global_req',
-				'type'  => 'text'
+				'type'  => 'number',
+				'class' => 'small-text',
 			],
 			[
 				'label' => __( 'Local links', $this->plugin_slug ),
 				'slug'  => 'local_req',
-				'type'  => 'text'
+				'type'  => 'number',
+				'class' => 'small-text',
 			],
 			[
 				'label' => __( 'Local url', $this->plugin_slug ),
 				'slug'  => 'local_domain',
-				'type'  => 'text'
+				'type'  => 'text',
+				'class' => 'regular-text code',
 			],
 			[
 				'label' => __( 'For new posts', $this->plugin_slug ),
 				'slug'  => 'new_post_to_anchors',
 				'type'  => 'checkbox',
 				'text'  => __( 'Add to anchors', $this->plugin_slug ),
+				'class' => '',
 			],
 			[
 				'label' => __( 'Default count for new anchor (default)', $this->plugin_slug ),
 				'slug'  => 'new_req',
-				'type'  => 'text'
+				'type'  => 'number',
+				'class' => 'small-text',
 			],
 		];
 

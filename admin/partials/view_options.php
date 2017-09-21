@@ -18,9 +18,6 @@
 						<?php //submit_button( $submit_text ); ?>
                         <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary"
                                                  value="<? echo $submit_text ?>"/>
-                            <input action="action" onclick="window.history.go(-1); return false;"
-                                   class="button button-cancel" type="button"
-                                   value="<?= _e( 'Back', $this->plugin_slug ) ?>"/>
                         <div class="spinner"></div>
                         </p>
                     </div>

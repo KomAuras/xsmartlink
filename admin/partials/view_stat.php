@@ -3,25 +3,25 @@
 
     <table class="form-table">
         <TR>
-            <TD COLSPAN="2"><B><?= _e( 'Posts', $this->plugin_slug ) ?></B></TD>
+            <Th COLSPAN="2"><h2><?= _e( 'Posts', $this->plugin_slug ) ?></h2></Th>
         </TR>
         <TR>
-            <TD width=20%><?= _e( 'Donors', $this->plugin_slug ) ?></TD>
+            <Th><?= _e( 'Donors', $this->plugin_slug ) ?></Th>
             <TD><?= $donors ?></TD>
         </TR>
         <TR>
-            <TD><?= _e( 'Acceptors', $this->plugin_slug ) ?></TD>
+            <Th><?= _e( 'Acceptors', $this->plugin_slug ) ?></Th>
             <TD><?= $acceptors ?></TD>
         </TR>
         <TR>
-            <TD COLSPAN="2"><B><?= _e( 'Request', $this->plugin_slug ) ?></B></TD>
+            <Th COLSPAN="2"><h2><?= _e( 'Request', $this->plugin_slug ) ?></h2></Th>
         </TR>
         <TR <?php if ( $need_g_links ) { ?>STYLE="color:red;"<?php } ?>>
-            <TD><?= _e( 'Need outer links', $this->plugin_slug ) ?></TD>
+            <Th><?= _e( 'Need outer links', $this->plugin_slug ) ?></Th>
             <TD><?= $need_g_links ?></TD>
         </TR>
         <TR <?php if ( $need_l_links ) { ?>STYLE="color:red;"<?php } ?>>
-            <TD><?= _e( 'Need local links', $this->plugin_slug ) ?></TD>
+            <Th><?= _e( 'Need local links', $this->plugin_slug ) ?></Th>
             <TD><?= $need_l_links ?></TD>
         </TR>
     </TABLE>

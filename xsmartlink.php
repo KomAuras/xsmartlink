@@ -43,27 +43,7 @@ $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
     __FILE__,
     $plugin_slug
 );
-
-//Optional: If you're using a private repository, create an OAuth consumer
-//and set the authentication credentials like this:
-
-$myUpdateChecker->setAuthentication(array(
-    'consumer_key' => Info::CONSUMER_KEY,
-    'consumer_secret' => Info::CONSUMER_SECRET,
-));
-
-//Optional: Set the branch that contains the stable release.
 $myUpdateChecker->setBranch('master');
-/*
-require_once plugin_dir_path( __FILE__ ) . 'includes/vendor/plugin-update-checker/plugin-update-checker.php';
-$plugin_slug     = Info::SLUG;
-$update_url      = Info::UPDATE_URL;
-$myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
-    $update_url . '?action=get_metadata&slug=' . $plugin_slug,
-    __FILE__,
-    $plugin_slug
-);
-*/
 
 /**
  * Run the plugin.
@@ -74,6 +54,11 @@ function run() {
     $plugin->run();
 }
 
+
+/**
+ * Add debug function
+ * use as: _log('log message');
+ */
 if ( ! function_exists( '_log' ) ) {
     function _log( $message ) {
         if ( WP_DEBUG === true ) {

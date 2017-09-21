@@ -45,7 +45,7 @@ function xsml_process_relinks_js1() {
 }
 
 function xsml_process_run_js1() {
-    if (current1 < records1) {
+    if (current1 <= records1) {
         $j.post(ajaxurl, {action: 'process_ajax1', records: records1, offset: current1}, function (response) {
             current1 = current1 + 20;
             if (current1 >= records1) {
@@ -78,7 +78,7 @@ function xsml_process_relinks_js2() {
 }
 
 function xsml_process_run_js2() {
-    if (current2 < records2) {
+    if (current2 <= records2) {
         $j.post(ajaxurl, {action: 'process_ajax2', records: records2, offset: current2}, function (response) {
             current2 = current2 + 20;
             if (current2 >= records2) {

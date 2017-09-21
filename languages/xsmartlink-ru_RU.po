@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
 "POT-Creation-Date: 2017-09-21 15:17+1000\n"
-"PO-Revision-Date: 2017-09-21 15:19+1000\n"
+"PO-Revision-Date: 2017-09-21 16:57+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -22,6 +22,10 @@ msgstr ""
 "X-Poedit-SearchPath-0: languages\n"
 "X-Poedit-SearchPath-1: .\n"
 "X-Poedit-SearchPathExcluded-0: includes/vendor/plugin-update-checker\n"
+
+#. Description of the plugin/theme
+msgid "Smart link posts plugin"
+msgstr "Плагин для умной перелинковки ссылок"
 
 #: admin/class-admin.php:36
 msgid "Settings"

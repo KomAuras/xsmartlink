@@ -268,6 +268,7 @@ class Browse {
 		$records = intval( $_POST['records'] );
 		if ( $records == 0 ) {
 			$posts = $this->anchors->get_posts_forprocess( false );
+			_log($posts);
 			echo count( $posts );
 			die();
 		} else {
