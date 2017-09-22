@@ -32,7 +32,75 @@ class Browse {
 		$this->define_hooks();
 	}
 
+
+    public function xsl_add_option() {
+        $option = 'per_page';
+        $args = array(
+            'label' => __('Number of items per page:'),
+            'default' => 10,
+            'option' => 'xsl_per_page'
+        );
+        add_screen_option( $option, $args );
+    }
+
+    public function xsl_set_option($status, $option, $value) {
+        if ( 'xsl_per_page' == $option ) return $value;
+
+        return $status;
+    }
+
+    public function xsl_get_option() {
+        $user = get_current_user_id();
+        $screen = get_current_screen();
+        $option = $screen->get_option('per_page', 'option');
+
+        $per_page = get_user_meta($user, $option, true);
+
+        if ( empty ( $per_page) || $per_page < 1 ) {
+
+            $per_page = $screen->get_option( 'per_page', 'default' );
+
+        }
+        return $per_page;
+	}
+
 	public function define_hooks() {
+
+		$this->loader->add_action( 'load-toplevel_page_'.$this->plugin_slug . '_list', $this, 'xsl_add_option' );
+		$this->loader->add_filter( 'set-screen-option', $this, 'xsl_set_option', 10, 3);
+		/*
+        add_filter( 'screen_settings', function( $settings, \WP_Screen $screen )
+        {
+            if ( 'toplevel_page_xsmartlink_list' !== $screen->base ){
+                return $settings;
+			}
+
+			$option = 'per_page';
+
+            $args = array(
+                'label' => 'Movies',
+                'default' => 10,
+                'option' => 'cmi_movies_per_page'
+            );
+
+            //$screen->add_screen_option( $option, $args );
+
+            $amount = isset( $_GET['paged'] )
+                ? filter_var(
+                    absint( $_GET['paged'] ),
+                    FILTER_SANITIZE_NUMBER_INT,
+                    FILTER_NULL_ON_FAILURE
+                )
+                : 1;
+            return sprintf(
+                '<label for="amount">Amount:</label> '
+                .'<input step="1" min="1" max="999" class="screen-per-page" name="amount" value="%d">'
+                .get_submit_button( 'Set', 'secondary', 'submit-amount', false ),
+                $amount
+            );
+        }, 10, 2 );
+        */
+
 		// удаление 1 записи
 		$this->loader->add_action( 'wp_loaded', $this, 'delete' );
 		// удаление отмеченных
@@ -89,7 +157,7 @@ class Browse {
 			$p->items( $all_items );
 			$p->nextLabel( __( 'Forward', $this->plugin_slug ) );
 			$p->prevLabel( __( 'Back', $this->plugin_slug ) );
-			$p->limit( Info::XLINKS_PER_PAGE );
+			$p->limit( $this->xsl_get_option() );
 			$p->parameterName( Info::XLINKS_PAGE_KEY );
 			$p->target( "?page=xsmartlink_list" );
 			if ( ! isset( $_GET[ Info::XLINKS_PAGE_KEY ] ) ) {

@@ -8,7 +8,7 @@
             <label for="export_file"><?= _e( 'Export all links to CSV file with Windows-1251 codepage', $this->plugin_slug ) ?></label>
         </th>
         <p><input type="submit" name="submit" id="action_export" class="button button-primary"
-                  value="<?= _e( 'Export', $this->plugin_slug ) ?>"></p>
+                  value="<?= _e( 'Execute', $this->plugin_slug ) ?>"></p>
     </form>
 
 </div>

@@ -12,7 +12,10 @@
                 </td>
             </tr>
             <tr>
-                <th><label for="import_area"><?= _e('Or insert here the data block',$this->plugin_slug) ?></label></th>
+                <th colspan="2"><label><?= _e('or',$this->plugin_slug) ?></label></th>
+            </tr>
+            <tr>
+                <th><label for="import_area"><?= _e('Insert here the data block',$this->plugin_slug) ?></label></th>
                 <td>
                     <textarea placeholder="<?= _e('anchor;link;count',$this->plugin_slug) ?>" name="import_area" id="import_area" rows="10" cols="70" class="large-text code"></textarea>
                 </td>
