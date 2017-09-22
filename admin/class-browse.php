@@ -65,7 +65,7 @@ class Browse {
 	}
 
 	public function define_hooks() {
-
+	    // добвляем закладку опций вверху страницы со списком ссылок
 		$this->loader->add_action( 'load-toplevel_page_'.$this->plugin_slug . '_list', $this, 'xsl_add_option' );
 		$this->loader->add_filter( 'set-screen-option', $this, 'xsl_set_option', 10, 3);
 		/*
@@ -140,14 +140,44 @@ class Browse {
 		}
 	}
 
+	public function swap_order( $order ){
+		if ( $order == 'desc' )
+			return 'asc';
+
+		return 'desc';
+	}
+
+	public function build_header($label, $title, $orderby, $order){
+		$result = "";
+		$ord = $label==$orderby ? $this->swap_order($order) : 'asc';
+		$show_order = $label==$orderby ? 'column-primary sorted '.$order : 'sortable asc';
+		$width = $label=='link' ? ' width="30%"' : '';
+		$result .= '<th scope="col"'.$width.' class="manage-column sortable ' . $show_order .'"><a href="'.admin_url( '/admin.php?page=xsmartlink_list' ).'&amp;orderby='.$label.'&amp;order='.$ord.'"><span>'.$title.'</span><span class="sorting-indicator"></span></a></ht>';
+		return $result;
+	}
+
 	private function browse() {
 		global $wpdb;
 
+		// where
 		$where = "";
 		if ( isset( $_POST['xlinks_search'] ) AND $_POST['xlinks_search'] != '' ) {
 			$xlinks_search = $_POST['xlinks_search'];
 			$where         = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
 		}
+
+		// order by
+		$orderby_ = array(
+			'word'=>'a.value',
+			'link'=>'a.link',
+            'req'=>'a.req',
+            'error'=>'a.error404',
+			);
+		$order_ = array('asc','desc');
+		$orderby = isset($_GET['orderby']) ? $_GET['orderby'] : 'word';
+		$order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+		if (!array_key_exists($orderby,$orderby_)){$orderby = 'word';}
+		if (!in_array($order,$order_)){$order = 'asc';}
 
 		$all_items = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a {$where}" );
 		$limit     = "";
@@ -159,6 +189,8 @@ class Browse {
 			$p->prevLabel( __( 'Back', $this->plugin_slug ) );
 			$p->limit( $this->xsl_get_option() );
 			$p->parameterName( Info::XLINKS_PAGE_KEY );
+			$p->addParam('orderby',$orderby);
+			$p->addParam('order',$order);
 			$p->target( "?page=xsmartlink_list" );
 			if ( ! isset( $_GET[ Info::XLINKS_PAGE_KEY ] ) ) {
 				$p->currentPage( 1 );
@@ -181,8 +213,8 @@ class Browse {
                 {$wpdb->prefix}xanchors a
                 LEFT JOIN (SELECT anchor_id, count(*) count FROM {$wpdb->prefix}xlinks GROUP BY anchor_id) l ON l.anchor_id = a.id {$where}
             ORDER BY
-                a.error404 DESC, a.link ASC
-            " . $limit );
+                /*a.error404 DESC, a.link ASC*/
+            " . $orderby_[$orderby] . ' ' . $order . ' ' . $limit );
 		$items   = array();
 
 		foreach ( $anchors as $anchor ) {

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
 "POT-Creation-Date: 2017-09-22 13:37+1000\n"
-"PO-Revision-Date: 2017-09-22 14:32+1000\n"
+"PO-Revision-Date: 2017-09-22 16:09+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -185,7 +185,7 @@ msgstr "Слово"
 
 #: admin/partials/view_browse.php:38 admin/partials/view_browse.php:51
 msgid "Qty"
-msgstr "Требуется связать"
+msgstr "Требуется"
 
 #: admin/partials/view_browse.php:39 admin/partials/view_browse.php:52
 msgid "Count"

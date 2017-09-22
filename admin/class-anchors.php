@@ -192,7 +192,7 @@ class Anchors {
 			}
 			if ( $link_type == "acceptor" ) {
 				$this->on_delete_post( $post_id );
-			} else {
+			} elseif( $post->post_type = 'post' ) {
 				$this->relink( 0, 0, $post_id );
 			}
 		}
@@ -217,8 +217,8 @@ class Anchors {
 	}
 
 	public function on_resore_post( $post_id ) {
-		$post_data = get_post( $post_id );
-		if ( $post_data->post_link_type == 'donor' ) {
+		$post = get_post( $post_id );
+		if ( $post->post_type = 'post' && $post->post_link_type == 'donor' ) {
 			$this->relink( 0, 0, $post_id );
 		}
 	}
@@ -271,6 +271,9 @@ class Anchors {
 
 	public function get_posts_forprocess( $getcnt, $offset = 0, $limit = Info::XLINKS_PER_RECORD, $one_id = 0 ) {
 		global $wpdb;
+		// удаляем оторванные ссылки
+		$wpdb->query( "DELETE l FROM {$wpdb->prefix}xlinks l LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id WHERE p.ID IS NULL" );
+
 		// запрос возвращает номер поста и количество привязанных к нему
 		// ссылок, внешних и локальных. тип ссылок определяется по LIKE
 		// WHERE

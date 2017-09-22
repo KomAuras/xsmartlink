@@ -27,6 +27,21 @@ Author URI: http://www.mis-algoritmos.com
 		var $prevT = "Previous";
 		var $prevI = "&#171;"; //&#9668;
 
+		var $added = array();
+		function addParam( $param, $value ){
+			$this->added[] = array(
+				'param'=>$param,
+				'value'=>$value
+			);
+		}
+		function getParam() {
+			$result = "";
+			foreach ($this->added as $row){
+				$result .= '&amp;'.$row['param'].'='.$row['value'];
+			}
+			return $result;
+		}
+
 		/*****/
 		var $calculate = false;
 
@@ -86,9 +101,9 @@ Author URI: http://www.mis-algoritmos.com
 						if($this->urlF)
 								return str_replace($this->urlF,$id,$this->target);
 							else
-								return "$this->target?$this->parameterName=$id";
+								return "$this->target?$this->parameterName=$id".$this->getParam();
 					else
-						return "$this->target&$this->parameterName=$id";
+						return "$this->target&$this->parameterName=$id".$this->getParam();
 			}
 
 		function calculate(){

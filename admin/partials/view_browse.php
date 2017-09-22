@@ -32,12 +32,12 @@
                     <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><label
                                 class="screen-reader-text" for="cb-select-all-1">Select all</label><input
                                 id="cb-select-all-1" type="checkbox"></th>
-                    <th scope="col"><span><?= _e( 'Word', $this->plugin_slug ) ?></span></a></th>
-                    <th scope="col" width="30%"><?= _e( 'Acceptor', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('word',__( 'Word', $this->plugin_slug ), $orderby, $order) ?>
+                    <?= $this->build_header('link',__( 'Acceptor', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
-                    <th scope="col" WIDTH="9%"><?= _e( 'Qty', $this->plugin_slug ) ?></th>
-                    <th scope="col" WIDTH="7%"><?= _e( 'Count', $this->plugin_slug ) ?></th>
-                    <th scope="col" WIDTH="7%" NOWRAP><?= _e( 'Error', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
+                    <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('error',__( 'Error', $this->plugin_slug ), $orderby, $order) ?>
                 </tr>
                 </thead>
                 <tfoot>
@@ -45,12 +45,12 @@
                     <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><label
                                 class="screen-reader-text" for="cb-select-all-1">Select all</label><input
                                 id="cb-select-all-1" type="checkbox"></th>
-                    <th scope="col"><span><?= _e( 'Word', $this->plugin_slug ) ?></span></a></th>
-                    <th scope="col" width="30%"><?= _e( 'Acceptor', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('word',__( 'Word', $this->plugin_slug ), $orderby, $order) ?>
+                    <?= $this->build_header('link',__( 'Acceptor', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
-                    <th scope="col"><?= _e( 'Qty', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
-                    <th scope="col"><?= _e( 'Error', $this->plugin_slug ) ?></th>
+                    <?= $this->build_header('error',__( 'Error', $this->plugin_slug ), $orderby, $order) ?>
                 </tr>
                 </tfoot>
                 <tbody id="the-comment-list" data-wp-lists="list:comment">
