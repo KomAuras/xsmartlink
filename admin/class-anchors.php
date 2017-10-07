@@ -20,23 +20,24 @@ class Anchors {
 		$this->import      = new Import( $plugin_slug, $version, $option_name );
 	}
 
-    // Add posts column
-    function xsl_columns_head($defaults) {
-        $defaults['anchors'] = __('Number of links',$this->plugin_slug);
-        return $defaults;
-    }
+	// Add posts column
+	function xsl_columns_head( $defaults ) {
+		$defaults['anchors'] = __( 'Number of links', $this->plugin_slug );
 
-    // Show column data
-    function xsl_columns_content($column_name, $post_ID) {
+		return $defaults;
+	}
+
+	// Show column data
+	function xsl_columns_content( $column_name, $post_ID ) {
 		global $wpdb;
-      	$result = "";
-        if ($column_name == 'anchors') {
-        	$post = get_post( $post_ID );
-        	$result .= $post->post_link_type == "donor" ? "":__('Acceptor',$this->plugin_slug);
-        	$all = 0;
-        	$local = 0;
-    		if ( $post->post_link_type == "donor" ) {
-    			$data = $wpdb->get_results( "
+		$result = "";
+		if ( $column_name == 'anchors' ) {
+			$post   = get_post( $post_ID );
+			$result .= $post->post_link_type == "donor" ? "" : __( 'Acceptor', $this->plugin_slug );
+			$all    = 0;
+			$local  = 0;
+			if ( $post->post_link_type == "donor" ) {
+				$data = $wpdb->get_results( "
                 SELECT
                     a.link
                 FROM
@@ -45,18 +46,18 @@ class Anchors {
                 WHERE
                     t.post_id = {$post->ID}
                 " );
-                foreach($data as $row){
-                   	$pos = mb_strpos($row->link, $this->settings['local_domain']);
-                   	if ($pos!==false && $pos==0){
-                   		$local++;
-                   	}
-               		$all++;
-                }
-       			$result .= '<kbd>' . $all . ($local>0 ? ' (&#x2605;'.$local.')' : '') . '</kbd>';
-    		}
-        	echo $result;
-        }
-    }
+				foreach ( $data as $row ) {
+					$pos = mb_strpos( $row->link, $this->settings['local_domain'] );
+					if ( $pos !== false && $pos == 0 ) {
+						$local ++;
+					}
+					$all ++;
+				}
+				$result .= '<kbd>' . $all . ( $local > 0 ? ' (&#x2605;' . $local . ')' : '' ) . '</kbd>';
+			}
+			echo $result;
+		}
+	}
 
 	public function render() {
 		global $wpdb;
@@ -84,7 +85,7 @@ class Anchors {
 	}
 
 	public function add_metaboxes() {
-		return new MetaBoxes( __( 'Anchor list',$this->plugin_slug ), $this );
+		return new MetaBoxes( __( 'Anchor list', $this->plugin_slug ), $this );
 	}
 
 	public function setup_post_type() {
@@ -120,20 +121,20 @@ class Anchors {
 		return false;
 	}
 
-	public function get_post_anchor_list( $post, $mark_local=true ) {
+	public function get_post_anchor_list( $post, $mark_local = true ) {
 		$result = "";
 		$data   = $this->get_post_anchors( $post );
 		if ( is_array( $data ) && count( $data ) ) {
 			$result .= "<ul>";
 			foreach ( $data as $row ) {
-               	$local = "";
-               	if ($mark_local){
-	               	$pos = mb_strpos($row->link, $this->settings['local_domain']);
-    	           	if ($pos!==false && $pos==0){
-        	       		$local .= "&#x2605; ";
-            	   	}
-            	}
-				$result .= '<li>'.$local.'<a href="' . $row->link . '">' . $row->text . '</a></li>';
+				$local = "";
+				if ( $mark_local ) {
+					$pos = mb_strpos( $row->link, $this->settings['local_domain'] );
+					if ( $pos !== false && $pos == 0 ) {
+						$local .= "&#x2605; ";
+					}
+				}
+				$result .= '<li>' . $local . '<a href="' . $row->link . '">' . $row->text . '</a></li>';
 			}
 			$result .= "</ul>";
 		}
@@ -142,7 +143,7 @@ class Anchors {
 	}
 
 	public function add_links_to_content( $content ) {
-		if ( is_single() && isset($this->settings['insert_in_pages']) && $this->settings['insert_in_pages'] == 1 ) {
+		if ( is_single() && isset( $this->settings['insert_in_pages'] ) && $this->settings['insert_in_pages'] == 1 ) {
 			//load_plugin_textdomain($this->plugin_slug, false, plugin_dir_path( dirname( __FILE__ ) ) . '/languages' );
 			$data = $this->get_post_anchors( get_post() );
 			if ( is_array( $data ) && count( $data ) ) {
@@ -186,13 +187,13 @@ class Anchors {
 			$post = get_post( $post_id );
 
 			// вызывать нужно при update == true. в ином случае пермальинк будет как для ревизии
-			if ( $update == true && isset($this->settings['new_post_to_anchors']) && $this->settings['new_post_to_anchors'] == 1 ) {
+			if ( $update == true && isset( $this->settings['new_post_to_anchors'] ) && $this->settings['new_post_to_anchors'] == 1 ) {
 				// todo: подумать в каком случае нужно добавлять себя в anchors
 				$this->import->post_to_anchor( $post_id );
 			}
 			if ( $link_type == "acceptor" ) {
 				$this->on_delete_post( $post_id );
-			} elseif( $post->post_type = 'post' ) {
+			} elseif ( $post->post_type = 'post' ) {
 				$this->relink( 0, 0, $post_id );
 			}
 		}
@@ -269,10 +270,28 @@ class Anchors {
 		return $httpCode;
 	}
 
-	public function get_posts_forprocess( $getcnt, $offset = 0, $limit = Info::XLINKS_PER_RECORD, $one_id = 0 ) {
+	/**
+	 * Получить список постов для перелинковки
+	 *
+	 * @param $use_limits bool учитывать лимиты
+	 * @param int $offset int
+	 * @param int $limit int
+	 * @param int $post_id int
+	 *
+	 * @return array|null|object
+	 */
+	public function get_posts_forprocess( $use_limits, $offset = 0, $limit = Info::XLINKS_PER_RECORD, $post_id = 0 ) {
 		global $wpdb;
-		// удаляем оторванные ссылки
-		$wpdb->query( "DELETE l FROM {$wpdb->prefix}xlinks l LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id WHERE p.ID IS NULL" );
+
+		// если грузим все (выполняется при полной перелинковке)
+		if ( $use_limits == false && $post_id == 0 ) {
+			// удаляем оторванные ссылки
+			$wpdb->query( "DELETE l FROM {$wpdb->prefix}xlinks l LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id WHERE p.ID IS NULL" );
+			// очищаем талицу сортировки
+			$wpdb->query( "TRUNCATE {$wpdb->prefix}xtempsort" );
+			// заполняем таблицу сортировки
+			$wpdb->query( "INSERT INTO {$wpdb->prefix}xtempsort (post_id, sort_num) SELECT ID, FLOOR(RAND() * 1000) from wp_posts p WHERE p.post_type = 'post'" );
+		}
 
 		// запрос возвращает номер поста и количество привязанных к нему
 		// ссылок, внешних и локальных. тип ссылок определяется по LIKE
@@ -286,7 +305,12 @@ class Anchors {
             t.g_count,
             t.l_count
         FROM
-            {$wpdb->prefix}posts p
+            {$wpdb->prefix}posts p";
+		if ( $use_limits == true ) {
+			// с лимитами линкуем таблицу сортировки
+			$q .= " LEFT JOIN {$wpdb->prefix}xtempsort tl ON tl.post_id = p.ID ";
+		}
+		$q .= "
             JOIN (SELECT
                 IFNULL(gl.count,0) g_count,
                 IFNULL(ll.count,0) l_count,
@@ -301,18 +325,18 @@ class Anchors {
             AND (p.post_status = 'publish' OR p.post_status = 'future')
 			AND (t.g_count + t.l_count) < {$this->settings['global_req']}
         ";
-		if ( $one_id > 0 ) {
-			$q .= " AND p.ID = {$one_id}";
+		if ( $post_id > 0 ) {
+			$q .= " AND p.ID = {$post_id}";
 		}
-		if ( $getcnt == true ) {
-			$q .= " LIMIT {$offset},{$limit}";
+		if ( $use_limits == true ) {
+			$q .= " ORDER BY tl.sort_num LIMIT {$offset},{$limit}";
 		}
 		$posts = $wpdb->get_results( $q );
-		/*
-		foreach ( $posts as $post ) {
-			_log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
-		}
-		*/
+
+//		foreach ( $posts as $post ) {
+//			_log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
+//		}
+
 		return $posts;
 	}
 

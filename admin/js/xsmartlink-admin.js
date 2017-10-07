@@ -14,11 +14,11 @@
     $(document).ready(function () {
         showSpinner();
         $('td.more_posts').hover(function (event) {
-        	$(this).find('span.more_posts_s').hide();
-        	$(this).find('span.more_posts_h').show();
-        },function (event) {
-        	$(this).find('span.more_posts_h').hide();
-        	$(this).find('span.more_posts_s').show();
+            $(this).find('span.more_posts_s').hide();
+            $(this).find('span.more_posts_h').show();
+        }, function (event) {
+            $(this).find('span.more_posts_h').hide();
+            $(this).find('span.more_posts_s').show();
         });
     });
 
@@ -47,7 +47,7 @@ function xsml_process_relinks_js1() {
 function xsml_process_run_js1() {
     if (current1 <= records1) {
         $j.post(ajaxurl, {action: 'process_ajax1', records: records1, offset: current1}, function (response) {
-            current1 = current1 + 20;
+            current1 = current1 + xsl_per_page;
             if (current1 >= records1) {
                 $j("#progressbar").hide();
                 $j('#xlinks_progress').html(wma.all_linked);
@@ -80,7 +80,7 @@ function xsml_process_relinks_js2() {
 function xsml_process_run_js2() {
     if (current2 <= records2) {
         $j.post(ajaxurl, {action: 'process_ajax2', records: records2, offset: current2}, function (response) {
-            current2 = current2 + 20;
+            current2 = current2 + xsl_per_page;
             if (current2 >= records2) {
                 $j("#progressbar").hide();
                 $j('#xlinks_progress').html(wma.all_links_checked);

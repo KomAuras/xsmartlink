@@ -13,6 +13,11 @@ class Activator {
 		global $wpdb;
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
+		$current_db_version = get_option( INFO::OPTION_NAME . '_db_version' );
+		if ( $current_db_version == '' ) {
+			add_option( INFO::OPTION_NAME . '_db_version', 1 );
+		}
+
 		$option_name = INFO::OPTION_NAME;
 		if ( empty( get_option( $option_name ) ) ) {
 			$default_options = array(
@@ -58,5 +63,29 @@ class Activator {
             ";
 			$wpdb->query( $sql );
 		}
+		Activator::update();
+	}
+
+	public static function update() {
+		global $wpdb;
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+		$current_db_version = get_option( INFO::OPTION_NAME . '_db_version' );
+		if ( $current_db_version != Info::DB_VERSION ) {
+			if ( $current_db_version == 1 ) {
+				// Add two tables and field to wp_posts
+				$sql = "CREATE TABLE `{$wpdb->prefix}xtempsort` (
+                    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                    `post_id` int(11) unsigned NOT NULL,
+                    `sort_num` int(11) unsigned NOT NULL,
+                    PRIMARY KEY  (`id`),
+                    KEY `xlIndex5` (`sort_num`)
+                    ) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+                    ";
+				dbDelta( $sql );
+				$current_db_version = Info::DB_VERSION;
+			}
+		}
+		update_option( INFO::OPTION_NAME . '_db_version', Info::DB_VERSION );
 	}
 }

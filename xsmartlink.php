@@ -3,7 +3,7 @@
  * Plugin Name:       xSmart Link
  * Plugin URI:        http://www.clarionlife.net
  * Description:       Smart link posts plugin
- * Version:           2.0.1
+ * Version:           2.0.2
  * Author:            Evgeny Stefanenko
  * Author URI:        http://www.clarionlife.net
  * License:           GPL-2.0+

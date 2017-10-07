@@ -74,7 +74,7 @@ class Admin {
 				);
 			} elseif ( $field['type'] === 'checkbox' ) {
 				$v = '';
-				if ( isset($settings[ $slug ]) && $settings[ $slug ] == 1 ) {
+				if ( isset( $settings[ $slug ] ) && $settings[ $slug ] == 1 ) {
 					$v = ' checked';
 				}
 				$output[] = array(
@@ -91,10 +91,9 @@ class Admin {
 		wp_enqueue_style( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'css/xsmartlink-admin.css', [], $this->version );
 		wp_enqueue_script( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'js/xsmartlink-admin.js', [ 'jquery' ], $this->version, false );
 		wp_enqueue_script( 'charts', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js', [ 'jquery' ], $this->version, false );
-		//wp_enqueue_script( 'charts', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.js', [ 'jquery' ], $this->version, false );
 		wp_localize_script( $this->plugin_slug, 'wma', array(
 				'all_links_checked' => __( 'All links checked!', $this->plugin_slug ),
-				'all_linked' => __( 'All links linked!', $this->plugin_slug ),
+				'all_linked'        => __( 'All links linked!', $this->plugin_slug ),
 			)
 		);
 	}
@@ -160,7 +159,7 @@ class Admin {
 				'label' => __( 'Links in posts', $this->plugin_slug ),
 				'slug'  => 'insert_in_pages',
 				'type'  => 'checkbox',
-				'text'  => __( 'Show', $this->plugin_slug ),
+				'text'  => __( 'Show', $this->plugin_slug ) . '<p class="description" id="tagline-description">' . __( 'can be disabled and used to display links - a widget', $this->plugin_slug ) . '</p>',
 				'class' => '',
 			],
 			[

@@ -32,74 +32,76 @@ class Browse {
 		$this->define_hooks();
 	}
 
+	public function xsl_add_option() {
+		$option = 'per_page';
+		$args   = array(
+			'label'   => __( 'Number of items per page:' ),
+			'default' => 10,
+			'option'  => 'xsl_per_page'
+		);
+		add_screen_option( $option, $args );
+	}
 
-    public function xsl_add_option() {
-        $option = 'per_page';
-        $args = array(
-            'label' => __('Number of items per page:'),
-            'default' => 10,
-            'option' => 'xsl_per_page'
-        );
-        add_screen_option( $option, $args );
-    }
+	public function xsl_set_option( $status, $option, $value ) {
+		if ( 'xsl_per_page' == $option ) {
+			return $value;
+		}
 
-    public function xsl_set_option($status, $option, $value) {
-        if ( 'xsl_per_page' == $option ) return $value;
+		return $status;
+	}
 
-        return $status;
-    }
+	public function xsl_get_option() {
+		$user   = get_current_user_id();
+		$screen = get_current_screen();
+		$option = $screen->get_option( 'per_page', 'option' );
 
-    public function xsl_get_option() {
-        $user = get_current_user_id();
-        $screen = get_current_screen();
-        $option = $screen->get_option('per_page', 'option');
+		$per_page = get_user_meta( $user, $option, true );
 
-        $per_page = get_user_meta($user, $option, true);
+		if ( empty ( $per_page ) || $per_page < 1 ) {
 
-        if ( empty ( $per_page) || $per_page < 1 ) {
+			$per_page = $screen->get_option( 'per_page', 'default' );
 
-            $per_page = $screen->get_option( 'per_page', 'default' );
+		}
 
-        }
-        return $per_page;
+		return $per_page;
 	}
 
 	public function define_hooks() {
-	    // добвляем закладку опций вверху страницы со списком ссылок
-		$this->loader->add_action( 'load-toplevel_page_'.$this->plugin_slug . '_list', $this, 'xsl_add_option' );
-		$this->loader->add_filter( 'set-screen-option', $this, 'xsl_set_option', 10, 3);
+		// добвляем закладку опций вверху страницы со списком ссылок
+		$this->loader->add_action( 'load-toplevel_page_' . $this->plugin_slug . '_list', $this, 'xsl_add_option' );
+		$this->loader->add_filter( 'set-screen-option', $this, 'xsl_set_option', 10, 3 );
 		/*
-        add_filter( 'screen_settings', function( $settings, \WP_Screen $screen )
-        {
-            if ( 'toplevel_page_xsmartlink_list' !== $screen->base ){
-                return $settings;
+		add_filter( 'screen_settings', function( $settings, \WP_Screen $screen )
+		{
+			if ( 'toplevel_page_xsmartlink_list' !== $screen->base ){
+				return $settings;
 			}
 
 			$option = 'per_page';
 
-            $args = array(
-                'label' => 'Movies',
-                'default' => 10,
-                'option' => 'cmi_movies_per_page'
-            );
+			$args = array(
+				'label' => 'Movies',
+				'default' => 10,
+				'option' => 'cmi_movies_per_page'
+			);
 
-            //$screen->add_screen_option( $option, $args );
+			//$screen->add_screen_option( $option, $args );
 
-            $amount = isset( $_GET['paged'] )
-                ? filter_var(
-                    absint( $_GET['paged'] ),
-                    FILTER_SANITIZE_NUMBER_INT,
-                    FILTER_NULL_ON_FAILURE
-                )
-                : 1;
-            return sprintf(
-                '<label for="amount">Amount:</label> '
-                .'<input step="1" min="1" max="999" class="screen-per-page" name="amount" value="%d">'
-                .get_submit_button( 'Set', 'secondary', 'submit-amount', false ),
-                $amount
-            );
-        }, 10, 2 );
-        */
+			$amount = isset( $_GET['paged'] )
+				? filter_var(
+					absint( $_GET['paged'] ),
+					FILTER_SANITIZE_NUMBER_INT,
+					FILTER_NULL_ON_FAILURE
+				)
+				: 1;
+			return sprintf(
+				'<label for="amount">Amount:</label> '
+				.'<input step="1" min="1" max="999" class="screen-per-page" name="amount" value="%d">'
+				.get_submit_button( 'Set', 'secondary', 'submit-amount', false ),
+				$amount
+			);
+		}, 10, 2 );
+		*/
 
 		// удаление 1 записи
 		$this->loader->add_action( 'wp_loaded', $this, 'delete' );
@@ -126,9 +128,9 @@ class Browse {
 		// добавляем ссылки в конец поста
 		$this->loader->add_filter( 'the_content', $this->anchors, 'add_links_to_content' );
 		// добавляем столбец в посты
-		$this->loader->add_filter( 'manage_posts_columns', $this->anchors, 'xsl_columns_head');
+		$this->loader->add_filter( 'manage_posts_columns', $this->anchors, 'xsl_columns_head' );
 		// показываем данные в столбце
-		$this->loader->add_action( 'manage_posts_custom_column', $this->anchors, 'xsl_columns_content', 10, 2);
+		$this->loader->add_action( 'manage_posts_custom_column', $this->anchors, 'xsl_columns_content', 10, 2 );
 		$this->loader->run();
 	}
 
@@ -140,19 +142,21 @@ class Browse {
 		}
 	}
 
-	public function swap_order( $order ){
-		if ( $order == 'desc' )
+	public function swap_order( $order ) {
+		if ( $order == 'desc' ) {
 			return 'asc';
+		}
 
 		return 'desc';
 	}
 
-	public function build_header($label, $title, $orderby, $order){
-		$result = "";
-		$ord = $label==$orderby ? $this->swap_order($order) : 'asc';
-		$show_order = $label==$orderby ? 'column-primary sorted '.$order : 'sortable asc';
-		$width = $label=='link' ? ' width="30%"' : '';
-		$result .= '<th scope="col"'.$width.' class="manage-column sortable ' . $show_order .'"><a href="'.admin_url( '/admin.php?page=xsmartlink_list' ).'&amp;orderby='.$label.'&amp;order='.$ord.'"><span>'.$title.'</span><span class="sorting-indicator"></span></a></ht>';
+	public function build_header( $label, $title, $orderby, $order ) {
+		$result     = "";
+		$ord        = $label == $orderby ? $this->swap_order( $order ) : 'asc';
+		$show_order = $label == $orderby ? 'column-primary sorted ' . $order : 'sortable asc';
+		$width      = $label == 'link' ? ' width="30%"' : '';
+		$result     .= '<th scope="col"' . $width . ' class="manage-column sortable ' . $show_order . '"><a href="' . admin_url( '/admin.php?page=xsmartlink_list' ) . '&amp;orderby=' . $label . '&amp;order=' . $ord . '"><span>' . $title . '</span><span class="sorting-indicator"></span></a></ht>';
+
 		return $result;
 	}
 
@@ -168,16 +172,20 @@ class Browse {
 
 		// order by
 		$orderby_ = array(
-			'word'=>'a.value',
-			'link'=>'a.link',
-            'req'=>'a.req',
-            'error'=>'a.error404',
-			);
-		$order_ = array('asc','desc');
-		$orderby = isset($_GET['orderby']) ? $_GET['orderby'] : 'word';
-		$order = isset($_GET['order']) ? $_GET['order'] : 'asc';
-		if (!array_key_exists($orderby,$orderby_)){$orderby = 'word';}
-		if (!in_array($order,$order_)){$order = 'asc';}
+			'word'  => 'a.value',
+			'link'  => 'a.link',
+			'req'   => 'a.req',
+			'error' => 'a.error404',
+		);
+		$order_   = array( 'asc', 'desc' );
+		$orderby  = isset( $_GET['orderby'] ) ? $_GET['orderby'] : 'word';
+		$order    = isset( $_GET['order'] ) ? $_GET['order'] : 'asc';
+		if ( ! array_key_exists( $orderby, $orderby_ ) ) {
+			$orderby = 'word';
+		}
+		if ( ! in_array( $order, $order_ ) ) {
+			$order = 'asc';
+		}
 
 		$all_items = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a {$where}" );
 		$limit     = "";
@@ -189,8 +197,8 @@ class Browse {
 			$p->prevLabel( __( 'Back', $this->plugin_slug ) );
 			$p->limit( $this->xsl_get_option() );
 			$p->parameterName( Info::XLINKS_PAGE_KEY );
-			$p->addParam('orderby',$orderby);
-			$p->addParam('order',$order);
+			$p->addParam( 'orderby', $orderby );
+			$p->addParam( 'order', $order );
 			$p->target( "?page=xsmartlink_list" );
 			if ( ! isset( $_GET[ Info::XLINKS_PAGE_KEY ] ) ) {
 				$p->currentPage( 1 );
@@ -214,12 +222,12 @@ class Browse {
                 LEFT JOIN (SELECT anchor_id, count(*) count FROM {$wpdb->prefix}xlinks GROUP BY anchor_id) l ON l.anchor_id = a.id {$where}
             ORDER BY
                 /*a.error404 DESC, a.link ASC*/
-            " . $orderby_[$orderby] . ' ' . $order . ' ' . $limit );
+            " . $orderby_[ $orderby ] . ' ' . $order . ' ' . $limit );
 		$items   = array();
 
 		foreach ( $anchors as $anchor ) {
 			$links = array();
-			$data      = $wpdb->get_results( "
+			$data  = $wpdb->get_results( "
                 SELECT
                     p.ID /* , p.guid, p.post_title */
                 FROM
@@ -229,7 +237,7 @@ class Browse {
                     l.anchor_id={$anchor->id}
                 " );
 			foreach ( $data as $row ) {
-				$links[] = array('ID'=>$row->ID, 'link'=>get_permalink( $row->ID ));
+				$links[] = array( 'ID' => $row->ID, 'link' => get_permalink( $row->ID ) );
 			}
 			$items[] = array(
 				'id'       => $anchor->id,
@@ -243,7 +251,8 @@ class Browse {
 		}
 
 		// View
-		$heading = __( 'Manage links', $this->plugin_slug );
+		$heading  = __( 'Manage links', $this->plugin_slug );
+		$per_page = Info::XLINKS_PER_RECORD;
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/view_browse.php';
 	}
 
@@ -368,7 +377,7 @@ class Browse {
 		$records = intval( $_POST['records'] );
 		if ( $records == 0 ) {
 			$posts = $this->anchors->get_posts_forprocess( false );
-			_log($posts);
+			_log( $posts );
 			echo count( $posts );
 			die();
 		} else {

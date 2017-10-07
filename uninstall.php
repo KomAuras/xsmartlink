@@ -7,15 +7,22 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 // Delete tables and remove field from wp_posts
 global $wpdb;
-$sql1  = "DROP  TABLE `{$wpdb->prefix}xlinks`";
-$sql2  = "DROP  TABLE `{$wpdb->prefix}xanchors`";
-$sql3  = "ALTER TABLE `{$wpdb->prefix}posts` DROP `post_link_type`;";
-$wpdb->query( $sql1 );
-$wpdb->query( $sql2 );
-$wpdb->query( $sql3 );
+$sql = "DROP  TABLE `{$wpdb->prefix}xlinks`";
+$wpdb->query( $sql );
+
+$sql = "DROP  TABLE `{$wpdb->prefix}xanchors`";
+$wpdb->query( $sql );
+
+$sql = "DROP  TABLE `{$wpdb->prefix}xtempsort`";
+$wpdb->query( $sql );
+
+$sql = "ALTER TABLE `{$wpdb->prefix}posts` DROP `post_link_type`;";
+$wpdb->query( $sql );
 
 // Delete options
 delete_option('xsmartlink');
+delete_option(INFO::OPTION_NAME.'_db_version');
 
 // Delete options in Multisite
 delete_site_option('xsmartlink');
+delete_site_option(INFO::OPTION_NAME.'_db_version');

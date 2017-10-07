@@ -1,7 +1,11 @@
+<script type="text/javascript">
+var xsl_per_page=<?=$per_page?>
+</script>
+
 <div class="wrap">
     <h1><?= $heading ?></h1>
 
-	<? if ( $all_items || ( isset( $xlinks_search ) && $xlinks_search != '' ) ) { ?>
+    <? if ( $all_items || ( isset( $xlinks_search ) && $xlinks_search != '' ) ) { ?>
         <p>
             <a href="#" id="xl_relink_button" class="button button-primary"
                onclick="xsml_process_relinks_js1();"><?= _e( 'Relink all posts', $this->plugin_slug ) ?></a>
@@ -13,12 +17,12 @@
         </div>
         <div id="xlinks_progress"></div>
         <form method="post">
-			<?= wp_nonce_field( 'delete_all' ) ?>
+            <?= wp_nonce_field( 'delete_all' ) ?>
             <input name="action" value="delete_all" type="hidden">
             <div class="tablenav top">
-				<?php if ( isset( $p ) ) {
-					$p->show();
-				} ?>
+                <?php if ( isset( $p ) ) {
+                    $p->show();
+                } ?>
                 <div class="tablenav-pages one-page">
                     <input type="text" name="xlinks_search" id="xlinks_search"
                            value="<?php isset( $xlinks_search ) ? $xlinks_search : ""; ?>">
@@ -54,7 +58,7 @@
                 </tr>
                 </tfoot>
                 <tbody id="the-comment-list" data-wp-lists="list:comment">
-				<?php foreach ( $items as $item ) { ?>
+                <?php foreach ( $items as $item ) { ?>
                     <tr id="comment-1"
                         class="comment even thread-even depth-1 approved<?= $item['error404'] != "0" && $item['error404'] != "" ? " error_line" : ""; ?>">
                         <th scope="row" class="check-column">
@@ -72,42 +76,42 @@
                             </div>
                         </td>
                         <td><?php
-                        	$pos = mb_strpos($item['link'],$this->settings['local_domain']);
-                        	if ($pos!==false && $pos==0){
-                        		echo "&#x2605;";
-                        	} ?>
+                            $pos = mb_strpos($item['link'],$this->settings['local_domain']);
+                            if ($pos!==false && $pos==0){
+                                echo "&#x2605;";
+                            } ?>
                         <a href="<?= $item['link'] ?>" target="_blank"><?= $item['link']; ?></td>
 
                         <td class="more_posts"><?php
-                        	if (count($item['donors'])){
-                        		$count = 0;
-                        		$block = false;
-                        		foreach($item['donors'] as $donor ){
-	                        		if ($block == false && $count > 2){
-	                        			echo '<span class="more_posts_s"> ...</span><span class="more_posts_h" style="display:none">';
-	                        			$block = true;
-	                        		}
-									echo "<a href='" . $donor['link'] . "' target='_blank'>" . $donor['ID'] . "</a> ";
-	                        		$count++;
-                        		}
-                        		if ($block == true){
-	                       			echo "</span>";
-                        		}
-                        	}else{
-                        		_e( "Not donors yet.", $this->plugin_slug );
-                        	}
+                            if (count($item['donors'])){
+                                $count = 0;
+                                $block = false;
+                                foreach($item['donors'] as $donor ){
+                                    if ($block == false && $count > 2){
+                                        echo '<span class="more_posts_s"> ...</span><span class="more_posts_h" style="display:none">';
+                                        $block = true;
+                                    }
+                                    echo "<a href='" . $donor['link'] . "' target='_blank'>" . $donor['ID'] . "</a> ";
+                                    $count++;
+                                }
+                                if ($block == true){
+                                    echo "</span>";
+                                }
+                            }else{
+                                _e( "Not donors yet.", $this->plugin_slug );
+                            }
                         ?></td>
                         <td><?= $item['req'] ?></td>
                         <td><?= $item['count'] ?></td>
-						<?php if ( $item['error404'] == 0 ) { ?>
+                        <?php if ( $item['error404'] == 0 ) { ?>
                             <td></td>
-						<?php } else { ?>
+                        <?php } else { ?>
                             <td>
                                 <a href="https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP#<?= $item['error404'] ?>"><?= $item['error404'] ?></a>
                             </td>
-						<?php } ?>
+                        <?php } ?>
                     </tr>
-				<?php } ?>
+                <?php } ?>
                 </tbody>
 
                 <tbody id="the-extra-comment-list" data-wp-lists="list:comment" style="display: none;">
@@ -115,8 +119,8 @@
             </table>
             <p><input type="submit" name="delete_all" class="button action" value="<?= _e( 'Delete' ) ?>"/></p>
         </form>
-	<? } else { ?>
+    <? } else { ?>
         <p><?= _e( 'Not connections yet. You can add new.', $this->plugin_slug ) ?></p>
-	<? } ?>
+    <? } ?>
 
 </div>
