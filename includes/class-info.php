@@ -18,7 +18,7 @@ class Info {
      *
      * @var string
      */
-    const VERSION = '2.0.2';
+    const VERSION = '2.0.3';
 
     /**
      * The DB version.
@@ -43,11 +43,9 @@ class Info {
     const CONSUMER_KEY = '9bPtc84wYkmtgXVPMh';
     const CONSUMER_SECRET = 'R4ce25jSmEPWU3vn6XerMqcgtZTCa5rW';
 
-    const XLINKS_PER_PAGE = 5;
+    //const XLINKS_PER_PAGE = 5;
     const XLINKS_PAGE_KEY = 'paged';
-
-    // todo: не исправлять пока в JS не исправим фиксированное число - 20
-    const XLINKS_PER_RECORD = 2;
+    const XLINKS_PER_RECORD = 20;
     const XLINKS_WITHOUT_LINK = false;
 
     /**
