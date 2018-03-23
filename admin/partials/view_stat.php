@@ -2,14 +2,13 @@
     <h1><?= $heading ?></h1>
 
     <div>
-        <div style="float:left;width:300px;height:400px">
+        <div style="float:left;width:300px;height:300px">
         	<canvas id="chart_posts1" height="200" width="200"></canvas>
         </div>
-        <div style="float:left;width:300px;height:400px">
+        <div style="float:left;width:300px;height:300px">
         	<canvas id="chart_posts2" height="200" width="200"></canvas>
         </div>
     </div>
-
 </div>
 
 <script>

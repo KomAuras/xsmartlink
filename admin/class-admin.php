@@ -90,10 +90,12 @@ class Admin {
 	public function assets() {
 		wp_enqueue_style( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'css/xsmartlink-admin.css', [], $this->version );
 		wp_enqueue_script( $this->plugin_slug, plugin_dir_url( __FILE__ ) . 'js/xsmartlink-admin.js', [ 'jquery' ], $this->version, false );
+		wp_enqueue_script( $this->plugin_slug.'-uploader', plugin_dir_url( __FILE__ ) . 'js/xsmartlink-uploader.js', [ 'jquery' ], $this->version, false );
 		wp_enqueue_script( 'charts', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js', [ 'jquery' ], $this->version, false );
 		wp_localize_script( $this->plugin_slug, 'wma', array(
 				'all_links_checked' => __( 'All links checked!', $this->plugin_slug ),
 				'all_linked'        => __( 'All links linked!', $this->plugin_slug ),
+                'delete_question'        => __( 'Delete this image?', $this->plugin_slug ),
 			)
 		);
 	}
@@ -193,6 +195,13 @@ class Admin {
 				'type'  => 'number',
 				'class' => 'small-text',
 			],
+            [
+                'label' => __( 'Show images in links', $this->plugin_slug ),
+                'slug'  => 'image_enabled',
+                'type'  => 'checkbox',
+                'text'  => __( 'Show', $this->plugin_slug ),
+                'class' => '',
+            ],
 		];
 
 		// Model

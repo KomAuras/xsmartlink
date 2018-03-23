@@ -5,7 +5,8 @@ namespace SmartLink;
 /**
  * The class containing informatin about the plugin.
  */
-class Info {
+class Info
+{
     /**
      * The plugin slug.
      *
@@ -18,14 +19,14 @@ class Info {
      *
      * @var string
      */
-    const VERSION = '2.0.3';
+    const VERSION = '2.0.4';
 
     /**
      * The DB version.
      *
      * @var string
      */
-    const DB_VERSION = '2';
+    const DB_VERSION = '3';
 
     /**
      * The nae for the entry in the options table.
@@ -47,15 +48,17 @@ class Info {
     const XLINKS_PAGE_KEY = 'paged';
     const XLINKS_PER_RECORD = 20;
     const XLINKS_WITHOUT_LINK = false;
+    const XLINKS_IMAGES_PATH = 'xsmartlink';
 
-    /**
+        /**
      * Retrieves the plugin title from the main plugin file.
      *
      * @return string The plugin title
      */
-    public static function get_plugin_title() {
-        $path = plugin_dir_path( dirname( __FILE__ ) ) . self::SLUG . '.php';
+    public static function get_plugin_title()
+    {
+        $path = plugin_dir_path(dirname(__FILE__)) . self::SLUG . '.php';
 
-        return get_plugin_data( $path )['Name'];
+        return get_plugin_data($path)['Name'];
     }
 }

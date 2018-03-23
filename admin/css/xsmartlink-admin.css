@@ -90,3 +90,52 @@ div.pagination span.disabled {
 .wp-admin input[type=file] {
     width: 100%;
 }
+
+/*====================================
+=           Options Styles           =
+====================================*/
+
+.option_div_sp {
+    float: left;
+    clear: both;
+}
+
+/*====================================
+=     Browse Image upload Styles     =
+====================================*/
+
+.ibenic_file_label {
+    text-align: center;
+}
+
+/*.file-upload input {*/
+/*opacity: 0;*/
+/*position: absolute;*/
+/*width: 100%;*/
+/*height: 100%;*/
+/*display: block;*/
+/*cursor: pointer;*/
+/*}*/
+
+/*.file-preview img {*/
+/*width: 100%;*/
+/*height: auto;*/
+/*}*/
+
+/*.file-preview .ibenic_file_preview {*/
+/*position: absolute;*/
+/*width: 100%;*/
+/*height: 100%;*/
+/*overflow: hidden;*/
+/*}*/
+
+/*.ibenic_file_delete {*/
+/*position: absolute;*/
+/*width: 100%;*/
+/*top: 98%;*/
+/*left: 0;*/
+/*padding: 0.5em;*/
+/*text-align: center;*/
+/*color: white;*/
+/*background-color: red;*/
+/*}*/

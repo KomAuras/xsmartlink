@@ -3,8 +3,8 @@ Contributors: mixer
 Donate link: http://www.clarionlife.net/
 Tags: comments, spam
 Requires at least: 4.2
-Tested up to: 4.8.2
-Stable tag: 2.0.3
+Tested up to: 4.9.4
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,10 @@ Smart link links to posts
 == Description ==
 
 == Changelog ==
+
+= 2.0.4 =
+* Added images for links
+* Update updater. sik!
 
 = 2.0.3 =
 * Small fix for ajax process
@@ -23,7 +27,7 @@ Smart link links to posts
 * Cosmetic changes
 
 = 2.0.1 =
-* Locale canges
+* Locale changes
 * Add sorting to links browser
 * Add settings to links browser. Tab on window top
 

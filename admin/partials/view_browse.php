@@ -38,6 +38,7 @@ var xsl_per_page=<?=$per_page?>
                                 id="cb-select-all-1" type="checkbox"></th>
                     <?= $this->build_header('word',__( 'Word', $this->plugin_slug ), $orderby, $order) ?>
                     <?= $this->build_header('link',__( 'Acceptor', $this->plugin_slug ), $orderby, $order) ?>
+                    <th scope="col"><?= _e( 'Image', $this->plugin_slug ) ?></th>
                     <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
                     <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
@@ -51,6 +52,7 @@ var xsl_per_page=<?=$per_page?>
                                 id="cb-select-all-1" type="checkbox"></th>
                     <?= $this->build_header('word',__( 'Word', $this->plugin_slug ), $orderby, $order) ?>
                     <?= $this->build_header('link',__( 'Acceptor', $this->plugin_slug ), $orderby, $order) ?>
+                    <th scope="col"><?= _e( 'Image', $this->plugin_slug ) ?></th>
                     <th scope="col"><?= _e( 'Donor', $this->plugin_slug ) ?></th>
                     <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
@@ -61,11 +63,13 @@ var xsl_per_page=<?=$per_page?>
                 <?php foreach ( $items as $item ) { ?>
                     <tr id="comment-1"
                         class="comment even thread-even depth-1 approved<?= $item['error404'] != "0" && $item['error404'] != "" ? " error_line" : ""; ?>">
+
                         <th scope="row" class="check-column">
                             <label class="screen-reader-text" for="cb-select-1">Select</label>
                             <input id="cb-select-<?= $item['id'] ?>" type="checkbox" name="delete_xlink[]"
                                    value="<?= $item['id'] ?>">
                         </th>
+
                         <td><strong><?= $item['anchor'] ?></strong>
                             <div class="row-actions">
                                 <span class="edit"><a
@@ -75,12 +79,40 @@ var xsl_per_page=<?=$per_page?>
                                             onclick="return confirm('<?= _e( 'Are you sure you want to delete this anchor?', $this->plugin_slug ) ?>');"><?= _e( 'Delete' ) ?></a></span>
                             </div>
                         </td>
+
                         <td><?php
                             $pos = mb_strpos($item['link'],$this->settings['local_domain']);
                             if ($pos!==false && $pos==0){
                                 echo "&#x2605;";
                             } ?>
-                        <a href="<?= $item['link'] ?>" target="_blank"><?= $item['link']; ?></td>
+                            <a href="<?= $item['link'] ?>" target="_blank"><?= $item['link']; ?>
+                        </td>
+
+                        <td>
+                            <form action="" method="POST" class="ibenic_upload_form" enctype="multipart/form-data">
+                                <?php wp_nonce_field( 'anchor_image','anchor_image_once' ); ?>
+                                <div id="ibenic_file_upload<?= $item['id'] ?>" data-link-id="<?= $item['id'] ?>" class="ibenic_file_upload"
+                                    <?php if ($item['image'] !== ""){ ?>
+                                        style="display:none;"
+                                    <?php } ?>>
+                                    <input type="file" id="ibenic_file_input<?= $item['id'] ?>" class="ibenic_file_input" style="display:none;"/>
+                                    <label class="ibenic_file_label" for="ibenic_file_input<?= $item['id'] ?>"><div class="dashicons-before dashicons-format-image"></div></label>
+                                </div>
+                                <div id="ibenic_file_upload<?= $item['id'] ?>_preview" class="file-upload file-preview"
+                                    <?php if ($item['image'] == ""){ ?>
+                                     style="display:none;"
+                                    <?php } ?>>
+                                    <div class="ibenic_file_preview<?= $item['id'] ?>">
+                                    <?php if ($item['image'] !== ""){ ?>
+                                        <img src="<?= $item['image'] ?>" height="100">
+                                    <?php } ?>
+                                    </div>
+                                    <div class="row-actions">
+                                        <span class="delete"><a href="#" id="ibenic_file_delete<?= $item['id'] ?>" data-link-id="<?= $item['id'] ?>" data-attachment-id="<?= $item['attachment_id'] ?>" class="ibenic_file_delete"><?= _e( 'Delete' ) ?></a></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
 
                         <td class="more_posts"><?php
                             if (count($item['donors'])){
@@ -101,8 +133,11 @@ var xsl_per_page=<?=$per_page?>
                                 _e( "Not donors yet.", $this->plugin_slug );
                             }
                         ?></td>
+
                         <td><?= $item['req'] ?></td>
+
                         <td><?= $item['count'] ?></td>
+
                         <?php if ( $item['error404'] == 0 ) { ?>
                             <td></td>
                         <?php } else { ?>
@@ -110,6 +145,7 @@ var xsl_per_page=<?=$per_page?>
                                 <a href="https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP#<?= $item['error404'] ?>"><?= $item['error404'] ?></a>
                             </td>
                         <?php } ?>
+
                     </tr>
                 <?php } ?>
                 </tbody>
