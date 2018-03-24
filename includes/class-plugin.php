@@ -67,7 +67,7 @@ class Plugin
     function xsmartlink_update_db_check()
     {
         if (get_option(INFO::OPTION_NAME . '_db_version') != INFO::DB_VERSION) {
-            require_once plugin_dir_path(__FILE__) . 'includes/class-activator.php';
+            require_once plugin_dir_path(__FILE__) . 'class-activator.php';
             Activator::activate();
         }
     }
