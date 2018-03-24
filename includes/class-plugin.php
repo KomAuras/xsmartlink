@@ -41,6 +41,7 @@ class Plugin
         $this->loader->add_action('admin_menu', $plugin_admin, 'add_menus');
         $this->loader->add_filter('plugin_action_links', $plugin_admin, 'link_to_plugin_config', 10, 2);
         $this->loader->add_action('plugins_loaded', $this, 'load_languages');
+        $this->loader->add_action('plugins_loaded', $this, 'xsmartlink_update_db_check');
         $this->loader->add_action('widgets_init', $this, 'load_widgets');
     }
 
@@ -63,7 +64,7 @@ class Plugin
         load_plugin_textdomain($this->plugin_slug, false, $this->plugin_slug . '/languages/');
     }
 
-    function myplugin_update_db_check()
+    function xsmartlink_update_db_check()
     {
         if (get_option(INFO::OPTION_NAME . '_db_version') != INFO::DB_VERSION) {
             require_once plugin_dir_path(__FILE__) . 'includes/class-activator.php';
