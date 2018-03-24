@@ -13,6 +13,7 @@ class Activator
     public static function activate()
     {
         global $wpdb;
+        _log('запустили activate');
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         if (empty(get_option(INFO::OPTION_NAME))) {
             $default_options = array(
