@@ -190,8 +190,8 @@ class Anchors
                             <li style="list-style-type:none">
                                 <a href="' . $row['link'] . '">
                                 <div style="margin-left:1px; float:left">
-                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '"></div>                        
-                                    <div style="width:150px;">' . $row['text'] . '</div>                        
+                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:'.$this->settings['image_height'].'px"></div>                        
+                                    <div style="width:'.$this->settings['image_height'].'px;">' . $row['text'] . '</div>
                                 </div>
                                 </a>
                             </li>';

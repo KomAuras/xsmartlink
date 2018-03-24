@@ -202,6 +202,12 @@ class Admin {
                 'text'  => __( 'Show', $this->plugin_slug ),
                 'class' => '',
             ],
+            [
+                'label' => __( 'Image height', $this->plugin_slug ),
+                'slug'  => 'image_height',
+                'type'  => 'number',
+                'class' => 'small-text',
+            ],
 		];
 
 		// Model
