@@ -21,6 +21,8 @@ $wpdb->query( $sql );
 
 // Delete options
 delete_option('xsmartlink');
+delete_option(INFO::OPTION_NAME.'_db_version');
 
 // Delete options in Multisite
 delete_site_option('xsmartlink');
+delete_site_option(INFO::OPTION_NAME.'_db_version');

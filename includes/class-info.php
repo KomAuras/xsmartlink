@@ -26,7 +26,7 @@ class Info
      *
      * @var string
      */
-    const DB_VERSION = '3';
+    const DB_VERSION = '4';
 
     /**
      * The nae for the entry in the options table.

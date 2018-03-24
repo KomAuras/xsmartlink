@@ -70,5 +70,7 @@ class Activator
             ";
             $wpdb->query($sql);
         }
+
+        update_option(INFO::OPTION_NAME . '_db_version', INFO::DB_VERSION);
     }
 }
