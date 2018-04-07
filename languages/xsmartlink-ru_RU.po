@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2018-03-23 12:52+1000\n"
-"PO-Revision-Date: 2018-03-23 12:53+1000\n"
+"POT-Creation-Date: 2018-04-01 15:23+1000\n"
+"PO-Revision-Date: 2018-04-01 15:24+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -16,7 +16,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Poedit-Basepath: ..\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: languages\n"
@@ -54,12 +54,12 @@ msgid "Export"
 msgstr "Экспорт"
 
 #: admin/class-admin.php:137 admin/class-admin.php:138
-#: admin/class-anchors.php:83
+#: admin/class-anchors.php:88
 msgid "Stat"
 msgstr "Статистика"
 
 #: admin/class-admin.php:145 admin/class-admin.php:146
-#: admin/class-admin.php:213
+#: admin/class-admin.php:219
 msgid "Options"
 msgstr "Настройки плагина"
 
@@ -103,34 +103,38 @@ msgstr "Количество связей для ссылок (по умолча
 msgid "Show images in links"
 msgstr "Показывать ссылки с изображениями"
 
-#: admin/class-admin.php:214
+#: admin/class-admin.php:206
+msgid "Image height"
+msgstr "Высота картинки (для отображения)"
+
+#: admin/class-admin.php:220
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
-#: admin/class-anchors.php:25
+#: admin/class-anchors.php:28
 msgid "Number of links"
 msgstr "Количество ссылок"
 
-#: admin/class-anchors.php:36 admin/class-anchors.php:98
+#: admin/class-anchors.php:40 admin/class-anchors.php:105
 #: admin/partials/view_browse.php:40 admin/partials/view_browse.php:54
 #: admin/partials/view_browse_edit.php:16
 msgid "Acceptor"
 msgstr "Акцептор"
 
-#: admin/class-anchors.php:88
+#: admin/class-anchors.php:94
 msgid "Anchor list"
 msgstr "Список ссылок"
 
-#: admin/class-anchors.php:94
+#: admin/class-anchors.php:101
 msgid "Post type:"
 msgstr "Вид записи:"
 
-#: admin/class-anchors.php:96 admin/partials/view_browse.php:42
+#: admin/class-anchors.php:103 admin/partials/view_browse.php:42
 #: admin/partials/view_browse.php:56
 msgid "Donor"
 msgstr "Пост донор"
 
-#: admin/class-anchors.php:162
+#: admin/class-anchors.php:175
 msgid "See also:"
 msgstr "Читайте также:"
 

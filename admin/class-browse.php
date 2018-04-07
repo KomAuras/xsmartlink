@@ -258,15 +258,30 @@ class Browse
             foreach ($data as $row) {
                 $links[] = array('ID' => $row->ID, 'link' => get_permalink($row->ID));
             }
+            // get images from link if exists
+            $image = "";
+            $link_id = url_to_postid($anchor->link);
+            if ($anchor->attachment_id != 0) {
+                $image = wp_get_attachment_thumb_url($anchor->attachment_id);
+            } elseif ($link_id != 0) {
+                $thumbnail_id = get_post_thumbnail_id($link_id);
+                if ($thumbnail_id != "")
+                    $image = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
+                else
+                    $image = plugin_dir_url(__FILE__) . 'img/noimage.png';
+            }
+
             $items[] = array(
                 'id' => $anchor->id,
                 'anchor' => $anchor->value,
                 'link' => urldecode($this->idna->decode($anchor->link)),
+                'link_id' => $link_id,
                 'donors' => $links,
                 'req' => $anchor->req,
                 'count' => $anchor->count,
                 'error404' => $anchor->error404,
-                'image' => $anchor->attachment_id == 0 ? "" : wp_get_attachment_thumb_url($anchor->attachment_id),
+                //'image' => $anchor->attachment_id == 0 ? "" : wp_get_attachment_thumb_url($anchor->attachment_id),
+                'image' => $image,
                 'attachment_id' => $anchor->attachment_id
             );
         }

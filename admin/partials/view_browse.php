@@ -86,6 +86,12 @@ var xsl_per_page=<?=$per_page?>
                                 echo "&#x2605;";
                             } ?>
                             <a href="<?= $item['link'] ?>" target="_blank"><?= $item['link']; ?>
+                                <?php if ($item['link_id'] != 0){ ?>
+                                <div class="row-actions">
+                                <span class="edit"><a
+                                            href="/wp-admin/post.php?post=<?= $item['link_id'] ?>&amp;action=edit"><?= _e( 'Edit' ) ?></a></span>
+                                </div>
+                                <?php } ?>
                         </td>
 
                         <td>
@@ -107,9 +113,11 @@ var xsl_per_page=<?=$per_page?>
                                         <img src="<?= $item['image'] ?>" height="100">
                                     <?php } ?>
                                     </div>
+                                    <?php if ($item['link_id'] == 0){ ?>
                                     <div class="row-actions">
                                         <span class="delete"><a href="#" id="ibenic_file_delete<?= $item['id'] ?>" data-link-id="<?= $item['id'] ?>" data-attachment-id="<?= $item['attachment_id'] ?>" class="ibenic_file_delete"><?= _e( 'Delete' ) ?></a></span>
                                     </div>
+                                    <?php } ?>
                                 </div>
                             </form>
                         </td>
