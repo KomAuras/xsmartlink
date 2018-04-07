@@ -89,7 +89,7 @@ var xsl_per_page=<?=$per_page?>
                                 <?php if ($item['link_id'] != 0){ ?>
                                 <div class="row-actions">
                                 <span class="edit"><a
-                                            href="/wp-admin/post.php?post=<?= $item['link_id'] ?>&amp;action=edit"><?= _e( 'Edit' ) ?></a></span>
+                                            href="<?= admin_url() ?>post.php?post=<?= $item['link_id'] ?>&amp;action=edit"><?= _e( 'Edit' ) ?></a></span>
                                 </div>
                                 <?php } ?>
                         </td>

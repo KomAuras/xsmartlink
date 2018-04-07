@@ -130,14 +130,15 @@ class Anchors
                 // get images from link if exists
                 $one['image'] = "";
                 $link_id = url_to_postid($row->link);
-                if ($row->attachment_id != 0) {
-                    $one['image'] = wp_get_attachment_thumb_url($row->attachment_id);
-                } elseif ($link_id != 0) {
+                if ($link_id != 0) {
                     $thumbnail_id = get_post_thumbnail_id($link_id);
                     if ($thumbnail_id != "")
                         $one['image'] = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
                     else
                         $one['image'] = plugin_dir_url(__FILE__) . 'img/noimage.png';
+
+                } elseif ($row->attachment_id != 0) {
+                    $one['image'] = wp_get_attachment_thumb_url($row->attachment_id);
                 }
 //                if ($row->attachment_id) {
 //                    $one['image'] = wp_get_attachment_thumb_url($row->attachment_id);

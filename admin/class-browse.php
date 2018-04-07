@@ -261,14 +261,14 @@ class Browse
             // get images from link if exists
             $image = "";
             $link_id = url_to_postid($anchor->link);
-            if ($anchor->attachment_id != 0) {
-                $image = wp_get_attachment_thumb_url($anchor->attachment_id);
-            } elseif ($link_id != 0) {
+            if ($link_id != 0) {
                 $thumbnail_id = get_post_thumbnail_id($link_id);
                 if ($thumbnail_id != "")
                     $image = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
                 else
                     $image = plugin_dir_url(__FILE__) . 'img/noimage.png';
+            } elseif ($anchor->attachment_id != 0) {
+                $image = wp_get_attachment_thumb_url($anchor->attachment_id);
             }
 
             $items[] = array(
