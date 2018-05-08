@@ -183,10 +183,10 @@ class Anchors
             if (count($data)) {
 
                 $template = "
-                <hr>
+                <hr style=\"clear:both\">
                     <p style=\"text-align: justify;\">" . __('See also:', $this->plugin_slug) . "</p>
                     <ul style='" . ($img ? "margin:0;padding:0" : "") . "'>
-                    	{interests_list}
+                        {interests_list}
                     </ul>
                 <hr>";
                 $result = '';
@@ -359,7 +359,7 @@ class Anchors
         // и если общее количество ссылок меньше максимального количества из настроек
         // TODO: На будушее нужно сделать возможность пересчитать количество привязанных ссылок в соответствии с настройками
         $q = "
-		SELECT
+        SELECT
             t.ID,
             t.g_count,
             t.l_count
@@ -382,7 +382,7 @@ class Anchors
         WHERE
             p.post_type = 'post'
             AND (p.post_status = 'publish' OR p.post_status = 'future')
-			AND (t.g_count + t.l_count) < {$this->settings['global_req']}
+            AND (t.g_count + t.l_count) < {$this->settings['global_req']}
         ";
         if ($post_id > 0) {
             $q .= " AND p.ID = {$post_id}";
@@ -392,9 +392,9 @@ class Anchors
         }
         $posts = $wpdb->get_results($q);
 
-//		foreach ( $posts as $post ) {
-//			_log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
-//		}
+//      foreach ( $posts as $post ) {
+//          _log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
+//      }
 
         return $posts;
     }
