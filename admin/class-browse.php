@@ -15,6 +15,7 @@ class Browse
     private $loader;
     private $idna;
     private $anchors;
+    private $q;
 
     public function __construct($plugin_slug, $version, $option_name)
     {
@@ -171,8 +172,11 @@ class Browse
         $result = "";
         $ord = $label == $orderby ? $this->swap_order($order) : 'asc';
         $show_order = $label == $orderby ? 'column-primary sorted ' . $order : 'sortable asc';
+        $search = "";
+        if (isset($this->q) && $this->q != "")
+            $search = '&amp;q=' . $this->q;
         $width = $label == 'link' ? ' width="30%"' : '';
-        $result .= '<th scope="col"' . $width . ' class="manage-column sortable ' . $show_order . '"><a href="' . admin_url('/admin.php?page=xsmartlink_list') . '&amp;orderby=' . $label . '&amp;order=' . $ord . '"><span>' . $title . '</span><span class="sorting-indicator"></span></a></ht>';
+        $result .= '<th scope="col"' . $width . ' class="manage-column sortable ' . $show_order . '"><a href="' . admin_url('/admin.php?page=xsmartlink_list') . '&amp;orderby=' . $label . '&amp;order=' . $ord . $search . '"><span>' . $title . '</span><span class="sorting-indicator"></span></a></ht>';
 
         return $result;
     }
@@ -183,9 +187,14 @@ class Browse
 
         // where
         $where = "";
-        if (isset($_POST['xlinks_search']) AND $_POST['xlinks_search'] != '') {
+        if (isset($_POST['xlinks_search'])) {
             $xlinks_search = $_POST['xlinks_search'];
             $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
+            $this->q = $xlinks_search;
+        } elseif (isset($_GET['q']) AND $_GET['q'] != '') {
+            $xlinks_search = $_GET['q'];
+            $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
+            $this->q = $xlinks_search;
         }
 
         // order by
@@ -217,6 +226,8 @@ class Browse
             $p->parameterName(Info::XLINKS_PAGE_KEY);
             $p->addParam('orderby', $orderby);
             $p->addParam('order', $order);
+            if (isset($xlinks_search) && $xlinks_search != "")
+                $p->addParam('q', $xlinks_search);
             $p->target("?page=xsmartlink_list");
             if (!isset($_GET[Info::XLINKS_PAGE_KEY])) {
                 $p->currentPage(1);
