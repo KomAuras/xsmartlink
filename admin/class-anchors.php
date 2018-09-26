@@ -23,11 +23,11 @@ class Anchors
     }
 
     // Add posts column
-    function xsl_columns_head($defaults)
+    function xsl_columns_head( $posts_columns, $post_type)
     {
-        $defaults['anchors'] = __('Number of links', $this->plugin_slug);
-
-        return $defaults;
+        if ( $post_type == 'post' )
+        	$posts_columns['anchors'] = __('Number of links', $this->plugin_slug);
+        return $posts_columns;
     }
 
     // Show column data
@@ -202,7 +202,7 @@ class Anchors
                             <li style="list-style-type:none">
                                 <a href="' . $row['link'] . '">
                                 <div style="margin-left:1px; float:left">
-                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:'.$this->settings['image_height'].'px"></div>                        
+                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:'.$this->settings['image_height'].'px"></div>
                                     <div style="width:'.$this->settings['image_height'].'px;">' . $row['text'] . '</div>
                                 </div>
                                 </a>

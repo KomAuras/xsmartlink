@@ -143,7 +143,7 @@ class Browse
         // добавляем ссылки в конец поста
         $this->loader->add_filter('the_content', $this->anchors, 'add_links_to_content');
         // добавляем столбец в посты
-        $this->loader->add_filter('manage_posts_columns', $this->anchors, 'xsl_columns_head');
+        $this->loader->add_filter('manage_posts_columns', $this->anchors, 'xsl_columns_head', 10, 2);
         // показываем данные в столбце
         $this->loader->add_action('manage_posts_custom_column', $this->anchors, 'xsl_columns_content', 10, 2);
         $this->loader->run();
