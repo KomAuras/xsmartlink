@@ -23,10 +23,10 @@ class Anchors
     }
 
     // Add posts column
-    function xsl_columns_head( $posts_columns, $post_type)
+    function xsl_columns_head($posts_columns, $post_type)
     {
-        if ( $post_type == 'post' )
-        	$posts_columns['anchors'] = __('Number of links', $this->plugin_slug);
+        if ($post_type == 'post')
+            $posts_columns['anchors'] = __('Number of links', $this->plugin_slug);
         return $posts_columns;
     }
 
@@ -91,7 +91,7 @@ class Anchors
 
     public function add_metaboxes()
     {
-        return new MetaBoxes(__('Anchor list', $this->plugin_slug), $this);
+        return new MetaBoxes('xsm_links_meta_box', __('Anchor list', $this->plugin_slug), $this);
     }
 
     public function setup_post_type()
@@ -202,8 +202,8 @@ class Anchors
                             <li style="list-style-type:none">
                                 <a href="' . $row['link'] . '">
                                 <div style="margin-left:1px; float:left">
-                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:'.$this->settings['image_height'].'px"></div>
-                                    <div style="width:'.$this->settings['image_height'].'px;">' . $row['text'] . '</div>
+                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:' . $this->settings['image_height'] . 'px"></div>
+                                    <div style="width:' . $this->settings['image_height'] . 'px;">' . $row['text'] . '</div>
                                 </div>
                                 </a>
                             </li>';
