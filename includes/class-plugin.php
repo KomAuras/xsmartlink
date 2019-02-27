@@ -38,6 +38,8 @@ class Plugin
         $plugin_admin = new Admin($this->plugin_slug, $this->version, $this->option_name);
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'assets');
         $this->loader->add_action('admin_init', $plugin_admin, 'register_settings');
+        $this->loader->add_action('init', $plugin_admin, 'register_meta');
+        $this->loader->add_action('rest_api_init', $plugin_admin, 'register_api');
         $this->loader->add_action('admin_menu', $plugin_admin, 'add_menus');
         $this->loader->add_filter('plugin_action_links', $plugin_admin, 'link_to_plugin_config', 10, 2);
         $this->loader->add_action('plugins_loaded', $this, 'load_languages');

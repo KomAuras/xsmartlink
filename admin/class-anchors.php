@@ -37,10 +37,11 @@ class Anchors
         $result = "";
         if ($column_name == 'anchors') {
             $post = get_post($post_ID);
-            $result .= $post->post_link_type == "donor" ? "" : __('Acceptor', $this->plugin_slug);
+            $type = get_post_meta($post_ID, '_xsmartlink_type', true);
+            $result .= $type == "a" ? __('Acceptor', $this->plugin_slug) : "";
             $all = 0;
             $local = 0;
-            if ($post->post_link_type == "donor") {
+            if ($type != "a") {
                 $data = $wpdb->get_results("
                 SELECT
                     a.link
@@ -66,25 +67,48 @@ class Anchors
     public function render()
     {
         global $wpdb;
-        $donors = $wpdb->get_var("SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'donor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')");
-        $acceptors = $wpdb->get_var("SELECT count(*) count FROM {$wpdb->prefix}posts p WHERE p.post_link_type = 'acceptor' AND p.post_type = 'post' AND (p.post_status = 'publish' OR p.post_status = 'future')");
+        $donors = $wpdb->get_var("
+          SELECT 
+            count(*) count 
+          FROM 
+            {$wpdb->prefix}posts p 
+            left join {$wpdb->prefix}postmeta m on m.post_id = p.ID AND m.meta_key = '_xsmartlink_type'
+          WHERE 
+            p.post_type = 'post' 
+            AND (p.post_status = 'publish' OR p.post_status = 'future')
+            AND (m.meta_id IS NULL OR m.meta_value = 'd') 
+        ");
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $acceptors = $wpdb->get_var("
+          SELECT 
+            count(*) count 
+          FROM 
+            {$wpdb->prefix}posts p 
+            join {$wpdb->prefix}postmeta m on m.post_id = p.ID AND m.meta_key = '_xsmartlink_type' AND m.meta_value = 'a'
+          WHERE 
+            p.post_type = 'post' 
+            AND (p.post_status = 'publish' OR p.post_status = 'future')  
+        ");
         $g_links = $wpdb->get_var("SELECT sum(gl.count) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
         $l_links = $wpdb->get_var("SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
-        //$g_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link NOT LIKE '{$options['local_domain']}%'" );
-        //$l_anchors = $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$options['local_domain']}%'" );
         $gl1 = $this->settings['global_req'] - $this->settings['local_req'];
         if ($gl1 > 0) {
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $need_g_links = ($donors - ($g_links / $gl1)) * ($this->settings['global_req'] - $this->settings['local_req']);
         } else {
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $need_g_links = 0;
         }
         if ($this->settings['local_req'] > 0) {
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $need_l_links = ($donors - ($l_links / $this->settings['local_req'])) * $this->settings['local_req'];
         } else {
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $need_l_links = 0;
         }
 
         // View
+        /** @noinspection PhpUnusedLocalVariableInspection */
         $heading = __('Stat', $this->plugin_slug);
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/view_stat.php';
     }
@@ -98,10 +122,14 @@ class Anchors
     {
         global $post;
         if ($post->post_type === 'post') {
+            $type = get_post_meta($post->ID, '_xsmartlink_type', true);
+            if ($type == '') {
+                $type = 'd';
+            }
             echo '<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">' . __('Post type:', $this->plugin_slug) . ' ';
-            echo '<input type="radio" name="post_link_type" id="post_link_type_d" value="donor" ' . checked($post->post_link_type, 'donor', false) . '/>';
+            echo '<input type="radio" name="post_link_type" id="post_link_type_d" value="donor" ' . checked($type, 'd', false) . '/>';
             echo '<label for="for="post_link_type_d" class="select-it">' . __('Donor', $this->plugin_slug) . '</label> ';
-            echo '<input type="radio" name="post_link_type" id="post_link_type_a" value="acceptor" ' . checked($post->post_link_type, 'acceptor', false) . '/>';
+            echo '<input type="radio" name="post_link_type" id="post_link_type_a" value="acceptor" ' . checked($type, 'a', false) . '/>';
             echo '<label for="post_link_type_a" class="select-it">' . __('Acceptor', $this->plugin_slug) . '</label>';
             echo '</div>';
         }
@@ -111,7 +139,8 @@ class Anchors
     private function get_post_anchors($post)
     {
         global $wpdb;
-        if ($post->post_link_type == "donor") {
+        $type = get_post_meta($post->ID, '_xsmartlink_type', true);
+        if ($type != "a") {
             $data = $wpdb->get_results("
             SELECT
                 a.link,
@@ -140,16 +169,10 @@ class Anchors
                 } elseif ($row->attachment_id != 0) {
                     $one['image'] = wp_get_attachment_thumb_url($row->attachment_id);
                 }
-//                if ($row->attachment_id) {
-//                    $one['image'] = wp_get_attachment_thumb_url($row->attachment_id);
-//                    //$size = 'thumb-medium';
-//                    //$one['image'] = wp_get_attachment_image( $row->attachment_id, $size, false);
-//                }
                 $result[] = $one;
             }
             return $result;
         }
-
         return false;
     }
 
@@ -157,7 +180,7 @@ class Anchors
     {
         $result = "";
         $data = $this->get_post_anchors($post);
-        if (count($data)) {
+        if (is_array($data)) {
             $result .= "<ul>";
             foreach ($data as $row) {
                 $local = "";
@@ -171,7 +194,6 @@ class Anchors
             }
             $result .= "</ul>";
         }
-
         return $result;
     }
 
@@ -223,38 +245,35 @@ class Anchors
 
     public function on_save_post_type($post_id, $post, $update)
     {
-        global $wpdb;
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return false;
         }
-        if (!isset($_POST['post_link_type'])) {
+
+        if (isset($_POST['post_link_type'])) {
+            $type = $_POST['post_link_type'] == 'donor' ? 'd' : 'a';
+            update_post_meta($post_id, '_xsmartlink_type', $type);
+        } else {
+            $type = get_post_meta($post_id, '_xsmartlink_type', true);
+        }
+
+        if ($type == '') {
             return false;
         } else {
-            $link_type = $_POST['post_link_type'] == "acceptor" ? "acceptor" : "donor";
-            $wpdb->update($wpdb->prefix . 'posts', array('post_link_type' => $link_type), array('ID' => $post_id), array(
-                '%s',
-                '%s'
-            ));
-
-            $post = get_post($post_id);
-
-            // вызывать нужно при update == true. в ином случае пермальинк будет как для ревизии
+            if ($post->post_status == 'trash' || $type == "a") {
+                // удаляем связи у постов.
+                // TODO: Нужно удалять ссылки в таблице при удалении постов.
+                $this->on_delete_post($post_id);
+                return;
+            }
+            // вызывать нужно при update == true. в ином случае пермалинк будет как для ревизии
             if ($update == true && isset($this->settings['new_post_to_anchors']) && $this->settings['new_post_to_anchors'] == 1) {
                 // todo: подумать в каком случае нужно добавлять себя в anchors
                 $this->import->post_to_anchor($post_id);
             }
-            if ($link_type == "acceptor") {
-                $this->on_delete_post($post_id);
-            } elseif ($post->post_type = 'post') {
+            if ($post->post_type = 'post') {
                 $this->relink(0, 0, $post_id);
             }
         }
-    }
-
-    public function delete_post()
-    {
-        global $post;
-        $this->on_delete_post($post->ID);
     }
 
     public function on_delete_post($post_id)
@@ -274,7 +293,8 @@ class Anchors
     public function on_resore_post($post_id)
     {
         $post = get_post($post_id);
-        if ($post->post_type = 'post' && $post->post_link_type == 'donor') {
+        $type = get_post_meta($post_id, '_xsmartlink_type', true);
+        if ($post->post_type = 'post' && $type != 'a') {
             $this->relink(0, 0, $post_id);
         }
     }
@@ -391,18 +411,12 @@ class Anchors
             $q .= " ORDER BY tl.sort_num LIMIT {$offset},{$limit}";
         }
         $posts = $wpdb->get_results($q);
-
-//      foreach ( $posts as $post ) {
-//          _log( 'Forprocess: ' . $post->ID . ' G' . $post->g_count . ' / L' . $post->l_count );
-//      }
-
         return $posts;
     }
 
     public function relink($offset, $limit = Info::XLINKS_PER_RECORD, $one_id = 0)
     {
         global $wpdb;
-        //_log('offset: ' . $offset . ' limit: ' . $limit . ' one_id: ' . $one_id);
         if ($one_id > 0) {
             $posts = $this->get_posts_forprocess(false, $offset, $limit, $one_id);
         } else {
@@ -448,11 +462,6 @@ class Anchors
                 a.link
             ");
             shuffle($anchors);
-            /*
-            _log('------- for post: ' . $post->ID . ' -------');
-            _log($anchors);
-            return;
-            */
             foreach ($anchors as $anchor) {
                 if (substr(strtoupper($anchor->link), 0, strlen($this->settings['local_domain'])) == strtoupper($this->settings['local_domain'])) {
                     if ($post->l_count < $this->settings['local_req']) {

@@ -79,39 +79,6 @@ class Browse
         $this->loader->add_filter('set-screen-option', $this, 'xsl_set_option', 10, 3);
         //$this->loader->add_action( 'wp_enqueue_scripts', $this, 'ibenic_enqueue' );
 
-        /*
-        add_filter( 'screen_settings', function( $settings, \WP_Screen $screen )
-        {
-            if ( 'toplevel_page_xsmartlink_list' !== $screen->base ){
-                return $settings;
-            }
-
-            $option = 'per_page';
-
-            $args = array(
-                'label' => 'Movies',
-                'default' => 10,
-                'option' => 'cmi_movies_per_page'
-            );
-
-            //$screen->add_screen_option( $option, $args );
-
-            $amount = isset( $_GET['paged'] )
-                ? filter_var(
-                    absint( $_GET['paged'] ),
-                    FILTER_SANITIZE_NUMBER_INT,
-                    FILTER_NULL_ON_FAILURE
-                )
-                : 1;
-            return sprintf(
-                '<label for="amount">Amount:</label> '
-                .'<input step="1" min="1" max="999" class="screen-per-page" name="amount" value="%d">'
-                .get_submit_button( 'Set', 'secondary', 'submit-amount', false ),
-                $amount
-            );
-        }, 10, 2 );
-        */
-
         // удаление 1 записи
         $this->loader->add_action('wp_loaded', $this, 'delete');
         // удаление отмеченных

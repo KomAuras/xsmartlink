@@ -23,12 +23,12 @@ var xsl_per_page=<?=$per_page?>
                 <?php if ( isset( $p ) ) {
                     $p->show();
                 } ?>
-                <div class="tablenav-pages one-page">
+                <p class="search-box">
                     <input type="text" name="xlinks_search" id="xlinks_search"
                            value="<?php isset( $xlinks_search ) ? $xlinks_search : ""; ?>">
                     <button class="button"><?= _e( 'Search' ) ?></button>
                     <span class="displaying-num"><?= sprintf( _n( "%s item", "%s items", $all_items, $this->plugin_slug ), number_format_i18n( $all_items ) ); ?></span>
-                </div>
+                </p>
             </div>
             <table class="widefat fixed page" cellspacing="0">
                 <thead>
@@ -161,7 +161,10 @@ var xsl_per_page=<?=$per_page?>
                 <tbody id="the-extra-comment-list" data-wp-lists="list:comment" style="display: none;">
                 </tbody>
             </table>
-            <p><input type="submit" name="delete_all" class="button action" value="<?= _e( 'Delete' ) ?>"/></p>
+            <?php if ( isset( $p ) ) {
+                $p->show();
+            } ?>
+            <div class="tablenav bottom"><input type="submit" name="delete_all" class="button action" value="<?= _e( 'Delete' ) ?>"/></div>
         </form>
     <? } else { ?>
         <p><?= _e( 'Not connections yet. You can add new.', $this->plugin_slug ) ?></p>
