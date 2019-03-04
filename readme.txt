@@ -3,8 +3,8 @@ Contributors: mixer
 Donate link: http://www.clarionlife.net/
 Tags: comments, spam
 Requires at least: 4.2
-Tested up to: 4.9.7
-Stable tag: 2.0.8
+Tested up to: 5.1
+Stable tag: 2.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,10 @@ Smart link links to posts
 == Description ==
 
 == Changelog ==
+
+= 2.0.9 =
+* The post type settings of the plugin are transferred to the post metadata
+* Added support for block editor gutenberg
 
 = 2.0.8 =
 * Fixed breadcrumbs & sort order. Added search query parameter
@@ -25,7 +29,7 @@ Smart link links to posts
 
 = 2.0.5 =
 * Added height for images
-* Again fix update. Update db after upgrade plugin. Back option db_version 
+* Again fix update. Update db after upgrade plugin. Back option db_version
 
 = 2.0.4 =
 * Added images for links

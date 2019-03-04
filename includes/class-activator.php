@@ -77,18 +77,22 @@ class Activator
 
         // перенос значений в метаданные поста и удаление столбца
         $existing_columns = $wpdb->get_col("DESC `{$wpdb->prefix}posts`", 0);
-        if (!in_array('post_link_type', $existing_columns)) {
-            // после одного обновления плагина коментируем
-            // этот переноси и снимаем комментарий с последующего удаления столбца
-            // покак не удаляем на всякий случай.
+        if (in_array('post_link_type', $existing_columns)) {
+
+            // после одного обновления плагина коментируем этот перенос и
             $data = $wpdb->get_results("SELECT p.ID, p.post_link_type FROM {$wpdb->prefix}posts p WHERE  p.post_type = 'post'");
             foreach ($data as $one) {
                 update_post_meta($one->ID, '_xsmartlink_type', $one->post_link_type == 'donor' ? 'd' : 'a');
             }
+
+            // снимаем комментарий с последующего удаления столбца
+            // пока не удаляем на всякий случай.
+
             /*
             $sql = "ALTER TABLE `{$wpdb->prefix}posts` DROP `post_link_type`;";
             $wpdb->query($sql);
             */
+
         }
 
         update_option(INFO::OPTION_NAME . '_db_version', INFO::DB_VERSION);
