@@ -108,6 +108,10 @@ div.pagination span.disabled {
     text-align: center;
 }
 
+.file-preview {
+    overflow: hidden;
+}
+
 /*.file-upload input {*/
 /*opacity: 0;*/
 /*position: absolute;*/
