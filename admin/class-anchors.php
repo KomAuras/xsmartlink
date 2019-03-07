@@ -9,6 +9,7 @@ class Anchors
     private $option_name;
     private $settings;
     private $import;
+    private $hueman;
 
     public function __construct($plugin_slug, $version, $option_name)
     {
@@ -20,6 +21,8 @@ class Anchors
         $this->option_name = $option_name;
         $this->settings = get_option($this->option_name);
         $this->import = new Import($plugin_slug, $version, $option_name);
+        $data = wp_get_theme();
+        $this->hueman = $data->name == 'hueman'	|| $data->template == 'hueman';
     }
 
     // Add posts column
@@ -68,26 +71,26 @@ class Anchors
     {
         global $wpdb;
         $donors = $wpdb->get_var("
-          SELECT 
-            count(*) count 
-          FROM 
-            {$wpdb->prefix}posts p 
+          SELECT
+            count(*) count
+          FROM
+            {$wpdb->prefix}posts p
             left join {$wpdb->prefix}postmeta m on m.post_id = p.ID AND m.meta_key = '_xsmartlink_type'
-          WHERE 
-            p.post_type = 'post' 
+          WHERE
+            p.post_type = 'post'
             AND (p.post_status = 'publish' OR p.post_status = 'future')
-            AND (m.meta_id IS NULL OR m.meta_value = 'd') 
+            AND (m.meta_id IS NULL OR m.meta_value = 'd')
         ");
         /** @noinspection PhpUnusedLocalVariableInspection */
         $acceptors = $wpdb->get_var("
-          SELECT 
-            count(*) count 
-          FROM 
-            {$wpdb->prefix}posts p 
+          SELECT
+            count(*) count
+          FROM
+            {$wpdb->prefix}posts p
             join {$wpdb->prefix}postmeta m on m.post_id = p.ID AND m.meta_key = '_xsmartlink_type' AND m.meta_value = 'a'
-          WHERE 
-            p.post_type = 'post' 
-            AND (p.post_status = 'publish' OR p.post_status = 'future')  
+          WHERE
+            p.post_type = 'post'
+            AND (p.post_status = 'publish' OR p.post_status = 'future')
         ");
         $g_links = $wpdb->get_var("SELECT sum(gl.count) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
         $l_links = $wpdb->get_var("SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
@@ -161,6 +164,9 @@ class Anchors
                 $link_id = url_to_postid($row->link);
                 if ($link_id != 0) {
                     $thumbnail_id = get_post_thumbnail_id($link_id);
+                    if ($this->hueman) {
+                        $one['thumbnail'] = get_the_post_thumbnail( $link_id, 'thumbnail' );
+                    }
                     if ($thumbnail_id != "")
                         $one['image'] = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
                     else
@@ -220,11 +226,14 @@ class Anchors
                         if (!$img)
                             $result .= '<li><a href="' . $row['link'] . '">' . $row['text'] . '</a></li>';
                         else {
+                            $im = '<img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:' . $this->settings['image_height'] . 'px">';
+                            if (isset($row['thumbnail']))
+                            	$im = $row['thumbnail'];
                             $result .= '
                             <li style="list-style-type:none">
                                 <a href="' . $row['link'] . '">
                                 <div style="margin-left:1px; float:left">
-                                    <div><img src="' . ($row['image'] == '' ? plugin_dir_url(__FILE__) . 'img/noimage.png' : $row['image']) . '" style="height:' . $this->settings['image_height'] . 'px"></div>
+                                    <div>' . $im . '</div>
                                     <div style="width:' . $this->settings['image_height'] . 'px;">' . $row['text'] . '</div>
                                 </div>
                                 </a>
