@@ -1,12 +1,14 @@
+<? echo $g_links; ?>
+<? echo $l_links; ?>
 <div class="wrap">
     <h1><?= $heading ?></h1>
 
     <div>
         <div style="float:left;width:300px;height:300px">
-        	<canvas id="chart_posts1" height="200" width="200"></canvas>
+            <canvas id="chart_posts1" height="200" width="200"></canvas>
         </div>
         <div style="float:left;width:300px;height:300px">
-        	<canvas id="chart_posts2" height="200" width="200"></canvas>
+            <canvas id="chart_posts2" height="200" width="200"></canvas>
         </div>
     </div>
 </div>
@@ -14,13 +16,13 @@
 <script>
 
 window.chartColors = {
-	red: 'rgb(255, 99, 132)',
-	orange: 'rgb(255, 159, 64)',
-	yellow: 'rgb(255, 205, 86)',
-	green: 'rgb(75, 192, 192)',
-	blue: 'rgb(54, 162, 235)',
-	purple: 'rgb(153, 102, 255)',
-	grey: 'rgb(201, 203, 207)'
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    yellow: 'rgb(255, 205, 86)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(54, 162, 235)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)'
 };
 
 var ctx = document.getElementById('chart_posts1').getContext('2d');
@@ -32,10 +34,10 @@ var chart = new Chart(ctx, {
             label: "Записи",
             data: [<?= $donors ?>, <?= $acceptors ?>],
             backgroundColor: [
-				window.chartColors.green,
-            	window.chartColors.red,
-			],
-	        borderWidth: 0,
+                window.chartColors.green,
+                window.chartColors.red,
+            ],
+            borderWidth: 0,
         }],
     },
     options: {
@@ -58,15 +60,15 @@ var ctx = document.getElementById('chart_posts2').getContext('2d');
 var chart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-        labels: ["Внешних", "Локальных"],
+        labels: ["Внешние", "Локальные"],
         datasets: [{
-            label: "Требуется ссылкок",
-            data: [<?= $need_g_links ?>, <?= $need_l_links ?>],
+            label: "Ссылки",
+            data: [<?= $count_g_links ?>, <?= $count_l_links ?>],
             backgroundColor: [
-				window.chartColors.orange,
-            	window.chartColors.blue,
-			],
-	        borderWidth: 0,
+                window.chartColors.orange,
+                window.chartColors.blue,
+            ],
+            borderWidth: 0,
         }]
     },
     options: {
@@ -76,7 +78,7 @@ var chart = new Chart(ctx, {
         },
         title: {
             display: true,
-            text: 'Требуется ссылкок'
+            text: 'Ссылки'
         },
         animation: {
             animateScale: true,

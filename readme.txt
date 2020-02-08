@@ -4,7 +4,7 @@ Donate link: http://www.clarionlife.net/
 Tags: comments, spam
 Requires at least: 4.2
 Tested up to: 5.1
-Stable tag: 2.0.9
+Stable tag: 2.0.91
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,9 @@ Smart link links to posts
 == Description ==
 
 == Changelog ==
+
+= 2.0.91 =
+* Changed statistics display
 
 = 2.0.9 =
 * The post type settings of the plugin are transferred to the post metadata
