@@ -19,7 +19,7 @@ class Info
      *
      * @var string
      */
-    const VERSION = '2.0.91';
+    const VERSION = '2.1.0';
 
     /**
      * The DB version.
