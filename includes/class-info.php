@@ -19,7 +19,7 @@ class Info
      *
      * @var string
      */
-    const VERSION = '2.1.0';
+    const VERSION = '2.1.1';
 
     /**
      * The DB version.
@@ -40,9 +40,7 @@ class Info
      *
      * @var string
      */
-    const UPDATE_URL = 'https://bitbucket.org/EvgenyStefanenko/';
-    const CONSUMER_KEY = '9bPtc84wYkmtgXVPMh';
-    const CONSUMER_SECRET = 'R4ce25jSmEPWU3vn6XerMqcgtZTCa5rW';
+    const UPDATE_URL = 'https://github.com/KomAuras/xsmartlink/';
 
     //const XLINKS_PER_PAGE = 5;
     const XLINKS_PAGE_KEY = 'paged';
@@ -50,7 +48,7 @@ class Info
     const XLINKS_WITHOUT_LINK = false;
     const XLINKS_IMAGES_PATH = 'xsmartlink';
 
-        /**
+    /**
      * Retrieves the plugin title from the main plugin file.
      *
      * @return string The plugin title
