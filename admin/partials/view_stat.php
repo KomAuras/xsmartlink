@@ -10,6 +10,9 @@
         <div style="float:left;width:300px;height:300px">
             <canvas id="chart_posts2" height="200" width="200"></canvas>
         </div>
+        <div style="float:left;width:300px;height:300px">
+            <canvas id="chart_posts3" height="200" width="200"></canvas>
+        </div>
     </div>
 </div>
 
@@ -79,6 +82,37 @@ var chart = new Chart(ctx, {
         title: {
             display: true,
             text: 'Ссылки'
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    }
+});
+
+var ctx = document.getElementById('chart_posts3').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ["Внешних", "Локальных"],
+        datasets: [{
+            label: "Требуется ссылок",
+            data: [<?= $need_g_links ?>, <?= $need_l_links ?>],
+            backgroundColor: [
+                window.chartColors.orange,
+                window.chartColors.blue,
+            ],
+            borderWidth: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        legend: {
+            position: 'bottom',
+        },
+        title: {
+            display: true,
+            text: 'Требуется ссылок'
         },
         animation: {
             animateScale: true,

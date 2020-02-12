@@ -3,7 +3,7 @@
  * Plugin Name:       xSmart Link
  * Plugin URI:        https://bitbucket.org/EvgenyStefanenko/xsmartlink
  * Description:       Smart link posts plugin
- * Version:           2.1.1
+ * Version:           2.1.2
  * Author:            Evgeny Stefanenko
  * Author URI:        http://www.clarionlife.net
  * License:           GPL-2.0+
@@ -40,9 +40,9 @@ register_activation_hook(__FILE__, __NAMESPACE__ . '\\activation');
  */
 require_once plugin_dir_path(__FILE__) . 'includes/vendor/plugin-update-checker/plugin-update-checker.php';
 $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
-	Info::UPDATE_URL,
-	__FILE__,
-	Info::SLUG
+    Info::UPDATE_URL,
+    __FILE__,
+    Info::SLUG
 );
 
 //Optional: If you're using a private repository, specify the access token like this:

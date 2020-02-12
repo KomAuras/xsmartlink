@@ -98,24 +98,14 @@ class Anchors
         $count_g_links = $wpdb->get_var("SELECT ifnull(sum(a.req),0) FROM {$wpdb->prefix}xanchors a WHERE a.link NOT LIKE '{$this->settings['local_domain']}%'");
         // count internal anchors
         $count_l_links = $wpdb->get_var("SELECT ifnull(sum(a.req),0) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$this->settings['local_domain']}%'");
-        /*
-        // exists external links
-        $g_links = $wpdb->get_var("SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link NOT LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
-        // exists internal links
-        $l_links = $wpdb->get_var("SELECT ifnull(sum(gl.count),0) FROM {$wpdb->prefix}posts p JOIN (SELECT l.post_id, count(*) count FROM {$wpdb->prefix}xlinks l JOIN {$wpdb->prefix}xanchors a ON a.id = l.anchor_id WHERE a.link LIKE '{$this->settings['local_domain']}%' GROUP BY l.post_id) gl ON gl.post_id = p.id");
-        $gl1 = $this->settings['global_req'] - $this->settings['local_req'];
-        if ($gl1 > 0) {
-            $count_g_links = ($donors - ($g_links / $gl1)) * ($this->settings['global_req'] - $this->settings['local_req']);
-        } else {
-            $count_g_links = 0;
-        }
-        if ($this->settings['local_req'] > 0) {
-            $count_l_links = ($donors - ($l_links / $this->settings['local_req'])) * $this->settings['local_req'];
-        } else {
-            $count_l_links = 0;
-        }
-        */
-
+        // need external links
+        $need_g_links = $count_g_links - ( $donors * ( $this->settings['global_req'] - $this->settings['local_req'] ) );
+        if ($need_g_links < 0) 
+            $need_g_links = 0;
+        // need local links
+        $need_l_links = $count_l_links - ( $donors * ( $this->settings['local_req'] ) );
+        if ($need_l_links < 0) 
+            $need_l_links = 0;
         // View
         /** @noinspection PhpUnusedLocalVariableInspection */
         $heading = __('Stat', $this->plugin_slug);
