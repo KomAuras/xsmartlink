@@ -99,12 +99,12 @@ class Anchors
         // count internal anchors
         $count_l_links = $wpdb->get_var("SELECT ifnull(sum(a.req),0) FROM {$wpdb->prefix}xanchors a WHERE a.link LIKE '{$this->settings['local_domain']}%'");
         // need external links
-        $need_g_links = $count_g_links - ( $donors * ( $this->settings['global_req'] - $this->settings['local_req'] ) );
-        if ($need_g_links < 0) 
+        $need_g_links = $count_g_links - ($donors * ($this->settings['global_req'] - $this->settings['local_req']));
+        if ($need_g_links < 0)
             $need_g_links = 0;
         // need local links
-        $need_l_links = $count_l_links - ( $donors * ( $this->settings['local_req'] ) );
-        if ($need_l_links < 0) 
+        $need_l_links = $count_l_links - ($donors * ($this->settings['local_req']));
+        if ($need_l_links < 0)
             $need_l_links = 0;
         // View
         /** @noinspection PhpUnusedLocalVariableInspection */
@@ -135,6 +135,28 @@ class Anchors
     }
 
     // возвращает список ссылок массивом
+
+    public function get_post_anchor_list($post, $mark_local = true)
+    {
+        $result = "";
+        $data = $this->get_post_anchors($post);
+        if (is_array($data)) {
+            $result .= "<ul>";
+            foreach ($data as $row) {
+                $local = "";
+                if ($mark_local) {
+                    $pos = mb_strpos($row['link'], $this->settings['local_domain']);
+                    if ($pos !== false && $pos == 0) {
+                        $local .= "&#x2605; ";
+                    }
+                }
+                $result .= '<li>' . $local . '<a href="' . $row['link'] . '">' . $row['text'] . '</a></li>';
+            }
+            $result .= "</ul>";
+        }
+        return $result;
+    }
+
     private function get_post_anchors($post)
     {
         global $wpdb;
@@ -161,7 +183,7 @@ class Anchors
                 if ($link_id != 0) {
                     $thumbnail_id = get_post_thumbnail_id($link_id);
                     if ($this->hueman) {
-                        $one['thumbnail'] = get_the_post_thumbnail( $link_id, 'thumbnail' );
+                        $one['thumbnail'] = get_the_post_thumbnail($link_id, 'thumbnail');
                     }
                     if ($thumbnail_id != "")
                         $one['image'] = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
@@ -176,27 +198,6 @@ class Anchors
             return $result;
         }
         return false;
-    }
-
-    public function get_post_anchor_list($post, $mark_local = true)
-    {
-        $result = "";
-        $data = $this->get_post_anchors($post);
-        if (is_array($data)) {
-            $result .= "<ul>";
-            foreach ($data as $row) {
-                $local = "";
-                if ($mark_local) {
-                    $pos = mb_strpos($row['link'], $this->settings['local_domain']);
-                    if ($pos !== false && $pos == 0) {
-                        $local .= "&#x2605; ";
-                    }
-                }
-                $result .= '<li>' . $local . '<a href="' . $row['link'] . '">' . $row['text'] . '</a></li>';
-            }
-            $result .= "</ul>";
-        }
-        return $result;
     }
 
     public function add_links_to_content($content)
@@ -295,62 +296,71 @@ class Anchors
         return true;
     }
 
-    public function on_resore_post($post_id)
+    public function relink($offset, $limit = Info::XLINKS_PER_RECORD, $one_id = 0)
     {
-        $post = get_post($post_id);
-        $type = get_post_meta($post_id, '_xsmartlink_type', true);
-        if ($post->post_type = 'post' && $type != 'a') {
-            $this->relink(0, 0, $post_id);
+        global $wpdb;
+        if ($one_id > 0) {
+            $posts = $this->get_posts_forprocess(false, $offset, $limit, $one_id);
+        } else {
+            $posts = $this->get_posts_forprocess(true, $offset, $limit);
+            shuffle($posts);
         }
-    }
-
-    public function get_anchors_forprocess()
-    {
-        global $wpdb;
-        $anchors = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}xanchors a");
-
-        return $anchors;
-    }
-
-    public function process_anchor($offset, $limit = Info::XLINKS_PER_RECORD)
-    {
-        global $wpdb;
-        $anchors = $wpdb->get_results("
-        SELECT
-            a.id,
-            a.link
-        FROM
-            {$wpdb->prefix}xanchors a
-        LIMIT {$offset},{$limit}
-        ");
-        foreach ($anchors as $anchor) {
-            $error = (int)$this->check_anchor($anchor->link);
-            $wpdb->query("
-            UPDATE
-                {$wpdb->prefix}xanchors
-            SET
-                error404={$error}
+        foreach ($posts as $post) {
+            $permalink = get_permalink($post->ID);
+            $anchors = $wpdb->get_results("
+            SELECT
+                a.id,
+                a.link,
+                a.req,
+                t.count
+            FROM
+                {$wpdb->prefix}xanchors a
+                /* количество уже привязанных постов к ссылке */
+                LEFT JOIN (SELECT
+                        anchor_id as id,
+                        COUNT(*) count
+                    FROM
+                        {$wpdb->prefix}xlinks
+                    GROUP BY
+                        anchor_id) t ON t.id = a.id
             WHERE
-                id={$anchor->id}");
+                /* если к ссылке привязано постов меньше чем нужно */
+                a.req > IFNULL(t.count,0)
+                /* если пост еще не привязан к ссылке */
+                AND NOT EXISTS (SELECT 1 FROM {$wpdb->prefix}xlinks l WHERE l.anchor_id=a.id AND l.post_id = {$post->ID})
+                /* если пост еще не привязан к сcылке с таким же урлом (к примеру с другим словом) */
+                AND NOT EXISTS (SELECT
+                                    1
+                                FROM
+                                    {$wpdb->prefix}xanchors a1
+                                    JOIN {$wpdb->prefix}xanchors a2 on a2.link = a1.link
+                                    JOIN {$wpdb->prefix}xlinks l on l.anchor_id = a2.id
+                                WHERE
+                                    a1.id = a.id
+                                    AND l.post_id = {$post->ID})
+                /* если ссылка на пост не совпадает с урлом ссылки */
+                AND a.link <> '" . esc_sql($permalink) . "'
+            GROUP BY
+                a.link
+            ");
+            shuffle($anchors);
+            foreach ($anchors as $anchor) {
+                if (substr(strtoupper($anchor->link), 0, strlen($this->settings['local_domain'])) == strtoupper($this->settings['local_domain'])) {
+                    if ($post->l_count < $this->settings['local_req']) {
+                        $post->l_count++;
+                        $wpdb->query("INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') ");
+                    }
+                } else {
+                    if ($post->g_count < ($this->settings['global_req'] - $this->settings['local_req'])) {
+                        $post->g_count++;
+                        $wpdb->query("INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') ");
+                    }
+                }
+                if ($post->g_count >= ($this->settings['global_req'] - $this->settings['local_req']) && $post->l_count >= $this->settings['local_req']) {
+                    break;
+                }
+            }
         }
-    }
-
-    private function check_anchor($link)
-    {
-        $handle = curl_init($link);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_TIMEOUT, 3000);
-        $response = curl_exec($handle);
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-        if ($httpCode == 0) {
-            $httpCode = 404;
-        }
-        if ($httpCode == 200) {
-            $httpCode = 0;
-        }
-        curl_close($handle);
-
-        return $httpCode;
     }
 
     /**
@@ -419,70 +429,98 @@ class Anchors
         return $posts;
     }
 
-    public function relink($offset, $limit = Info::XLINKS_PER_RECORD, $one_id = 0)
+    public function on_resore_post($post_id)
+    {
+        $post = get_post($post_id);
+        $type = get_post_meta($post_id, '_xsmartlink_type', true);
+        if ($post->post_type = 'post' && $type != 'a') {
+            $this->relink(0, 0, $post_id);
+        }
+    }
+
+    public function get_anchors_forprocess()
     {
         global $wpdb;
-        if ($one_id > 0) {
-            $posts = $this->get_posts_forprocess(false, $offset, $limit, $one_id);
-        } else {
-            $posts = $this->get_posts_forprocess(true, $offset, $limit);
-            shuffle($posts);
-        }
-        foreach ($posts as $post) {
-            $permalink = get_permalink($post->ID);
-            $anchors = $wpdb->get_results("
-            SELECT
-                a.id,
-                a.link,
-                a.req,
-                t.count
-            FROM
-                {$wpdb->prefix}xanchors a
-                /* количество уже привязанных постов к ссылке */
-                LEFT JOIN (SELECT
-                        anchor_id as id,
-                        COUNT(*) count
-                    FROM
-                        {$wpdb->prefix}xlinks
-                    GROUP BY
-                        anchor_id) t ON t.id = a.id
+        $anchors = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}xanchors a");
+
+        return $anchors;
+    }
+
+    public function process_anchor($offset, $limit = Info::XLINKS_PER_RECORD)
+    {
+        global $wpdb;
+        $anchors = $wpdb->get_results("
+        SELECT
+            a.id,
+            a.link
+        FROM
+            {$wpdb->prefix}xanchors a
+        LIMIT {$offset},{$limit}
+        ");
+        foreach ($anchors as $anchor) {
+            $link_state = 0;
+            $error = (int)$this->check_anchor($anchor->link, $link_state);
+            $wpdb->query("
+            UPDATE
+                {$wpdb->prefix}xanchors
+            SET
+                error404={$error},
+                link_state={$link_state}
             WHERE
-                /* если к ссылке привязано постов меньше чем нужно */
-                a.req > IFNULL(t.count,0)
-                /* если пост еще не привязан к ссылке */
-                AND NOT EXISTS (SELECT 1 FROM {$wpdb->prefix}xlinks l WHERE l.anchor_id=a.id AND l.post_id = {$post->ID})
-                /* если пост еще не привязан к сcылке с таким же урлом (к примеру с другим словом) */
-                AND NOT EXISTS (SELECT
-                                    1
-                                FROM
-                                    {$wpdb->prefix}xanchors a1
-                                    JOIN {$wpdb->prefix}xanchors a2 on a2.link = a1.link
-                                    JOIN {$wpdb->prefix}xlinks l on l.anchor_id = a2.id
-                                WHERE
-                                    a1.id = a.id
-                                    AND l.post_id = {$post->ID})
-                /* если ссылка на пост не совпадает с урлом ссылки */
-                AND a.link <> '" . esc_sql($permalink) . "'
-            GROUP BY
-                a.link
-            ");
-            shuffle($anchors);
-            foreach ($anchors as $anchor) {
-                if (substr(strtoupper($anchor->link), 0, strlen($this->settings['local_domain'])) == strtoupper($this->settings['local_domain'])) {
-                    if ($post->l_count < $this->settings['local_req']) {
-                        $post->l_count++;
-                        $wpdb->query("INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') ");
+                id={$anchor->id}");
+        }
+    }
+
+    private function check_anchor($link, &$link_state)
+    {
+        $handle = curl_init($link);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_TIMEOUT, 3000);
+        $response = curl_exec($handle);
+
+        $link_state = 1;
+        $nofollow = 0;
+        $follow = 0;
+        preg_match_all('~<a(.*)<\/a>~isU', $response, $match);
+        if (isset($match[0]) && count($match[0])) {
+            foreach ($match[0] as $l) {
+                preg_match('~href="(.*)"~isU', $l, $href);
+                if (isset($href[1])) {
+                    $url = parse_url($href[1], PHP_URL_HOST);
+                    if (mb_strpos(strtolower($url), strtolower($this->settings['local_domain'])) !== false) {
+                        $follow++;
+                        preg_match('~rel="(.*)"~isU', $l, $rel);
+                        if (isset($rel[1])) {
+                            if (strpos(strtolower($rel[1]), 'nofollow') !== false) {
+                                $nofollow++;
+                            }
+                        }
                     }
-                } else {
-                    if ($post->g_count < ($this->settings['global_req'] - $this->settings['local_req'])) {
-                        $post->g_count++;
-                        $wpdb->query("INSERT INTO {$wpdb->prefix}xlinks (`post_id`, `anchor_id`) VALUES ('{$post->ID}','{$anchor->id}') ");
-                    }
-                }
-                if ($post->g_count >= ($this->settings['global_req'] - $this->settings['local_req']) && $post->l_count >= $this->settings['local_req']) {
-                    break;
                 }
             }
         }
+//        $result = ''; // 0
+//        $result = 'NONE'; // 1
+//        $result = 'FOLLOW'; // 2
+//        $result = 'NO FOLLOW'; // 3
+//        $result = 'MIXED'; // 4
+        if ($follow > 0)
+            $link_state = 2;
+        if ($nofollow > 0)
+            $link_state = 3;
+        if ($follow > 0 && $nofollow > 0 && $follow !== $nofollow)
+            $link_state = 4;
+        error_log('result: ' . $link_state);
+
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        if ($httpCode == 0) {
+            $httpCode = 404;
+        }
+        if ($httpCode == 200) {
+            $httpCode = 0;
+        }
+        curl_close($handle);
+
+        return $httpCode;
     }
 }

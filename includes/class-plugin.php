@@ -5,7 +5,6 @@ namespace SmartLink;
 /**
  * The main plugin class.
  */
-
 class Plugin
 {
     private $loader;
@@ -23,6 +22,7 @@ class Plugin
         $this->load_dependencies();
         $this->define_admin_hooks();
         $this->define_frontend_hooks();
+        $this->update();
     }
 
     private function load_dependencies()
@@ -54,6 +54,24 @@ class Plugin
 //      $this->loader->add_action( 'wp_footer', $plugin_frontend, 'render' );
         $this->loader->add_action('plugins_loaded', $this, 'load_languages');
         $this->loader->add_action('widgets_init', $this, 'load_widgets');
+    }
+
+    private function update()
+    {
+        global $wpdb;
+        // удаляем старье
+        // можно закомментировать через апдейт.
+        $existing_columns = $wpdb->get_col("DESC `{$wpdb->prefix}posts`", 0);
+        if (in_array('post_link_type', $existing_columns)) {
+            $sql = "ALTER TABLE `{$wpdb->prefix}posts` DROP `post_link_type`;";
+            $wpdb->query($sql);
+        }
+        $existing_columns = $wpdb->get_col("DESC `{$wpdb->prefix}xanchors`", 0);
+        if (!in_array('link_state', $existing_columns)) {
+            $sql = "ALTER TABLE `{$wpdb->prefix}xanchors` ";
+            $sql .= "ADD `link_state` INT NOT NULL DEFAULT 0;";
+            $wpdb->query($sql);
+        }
     }
 
     function load_widgets()

@@ -43,6 +43,7 @@ var xsl_per_page=<?=$per_page?>
                     <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
                     <?= $this->build_header('error',__( 'Error', $this->plugin_slug ), $orderby, $order) ?>
+                    <?= $this->build_header('link_state',__( 'Link state', $this->plugin_slug ), $orderby, $order) ?>
                 </tr>
                 </thead>
                 <tfoot>
@@ -57,6 +58,7 @@ var xsl_per_page=<?=$per_page?>
                     <?= $this->build_header('req',__( 'Qty', $this->plugin_slug ), $orderby, $order) ?>
                     <th scope="col"><?= _e( 'Count', $this->plugin_slug ) ?></th>
                     <?= $this->build_header('error',__( 'Error', $this->plugin_slug ), $orderby, $order) ?>
+                    <?= $this->build_header('link_state',__( 'Link state', $this->plugin_slug ), $orderby, $order) ?>
                 </tr>
                 </tfoot>
                 <tbody id="the-comment-list" data-wp-lists="list:comment">
@@ -153,6 +155,8 @@ var xsl_per_page=<?=$per_page?>
                                 <a href="https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP#<?= $item['error404'] ?>"><?= $item['error404'] ?></a>
                             </td>
                         <?php } ?>
+
+                        <td><?= $item['link_state'] ?></td>
 
                     </tr>
                 <?php } ?>

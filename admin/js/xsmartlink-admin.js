@@ -44,6 +44,20 @@ function xsml_process_relinks_js1() {
     }
 }
 
+function xsml_process_relinks_js2() {
+    if (records2 === 0) {
+        $j.post(ajaxurl, {action: 'process_ajax2', records: records2}, function (response) {
+            records2 = response;
+            $j('#xlinks_progress').html('');
+            $j("#progressbar").show();
+            $j('#progressbar .value').width($j('#progressbar').width() / 100 * (current2 / records2 * 100));
+            $j("#xl_relink_button").attr("disabled", "disabled");
+            $j("#xl_delete404_button").attr("disabled", "disabled");
+            window.setTimeout(xsml_process_run_js2, 50);
+        });
+    }
+}
+
 function xsml_process_run_js1() {
     if (current1 <= records1) {
         $j.post(ajaxurl, {action: 'process_ajax1', records: records1, offset: current1}, function (response) {
@@ -59,20 +73,6 @@ function xsml_process_run_js1() {
                 $j('#progressbar .value').width($j('#progressbar').width() / 100 * (current1 / records1 * 100));
                 window.setTimeout(xsml_process_run_js1, 50);
             }
-        });
-    }
-}
-
-function xsml_process_relinks_js2() {
-    if (records2 === 0) {
-        $j.post(ajaxurl, {action: 'process_ajax2', records: records2}, function (response) {
-            records2 = response;
-            $j('#xlinks_progress').html('');
-            $j("#progressbar").show();
-            $j('#progressbar .value').width($j('#progressbar').width() / 100 * (current2 / records2 * 100));
-            $j("#xl_relink_button").attr("disabled", "disabled");
-            $j("#xl_delete404_button").attr("disabled", "disabled");
-            window.setTimeout(xsml_process_run_js2, 50);
         });
     }
 }

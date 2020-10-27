@@ -13,7 +13,7 @@ class Activator
     public static function activate()
     {
         global $wpdb;
-        _log('запустили activate');
+        _log('Р·Р°РїСѓСЃС‚РёР»Рё activate');
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         if (empty(get_option(INFO::OPTION_NAME))) {
             $default_options = array(
@@ -63,37 +63,6 @@ class Activator
             ) DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
             ";
         dbDelta($sql);
-
-        // добавление столбца
-        /*
-        $existing_columns = $wpdb->get_col("DESC `{$wpdb->prefix}posts`", 0);
-        if (!in_array('post_link_type', $existing_columns)) {
-            $sql = "ALTER TABLE `{$wpdb->prefix}posts`
-            ADD `post_link_type` ENUM( 'acceptor', 'donor' ) NOT NULL DEFAULT 'donor';
-            ";
-            $wpdb->query($sql);
-        }
-        */
-
-        // перенос значений в метаданные поста и удаление столбца
-        $existing_columns = $wpdb->get_col("DESC `{$wpdb->prefix}posts`", 0);
-        if (in_array('post_link_type', $existing_columns)) {
-
-            // после одного обновления плагина коментируем этот перенос и
-            $data = $wpdb->get_results("SELECT p.ID, p.post_link_type FROM {$wpdb->prefix}posts p WHERE  p.post_type = 'post'");
-            foreach ($data as $one) {
-                update_post_meta($one->ID, '_xsmartlink_type', $one->post_link_type == 'donor' ? 'd' : 'a');
-            }
-
-            // снимаем комментарий с последующего удаления столбца
-            // пока не удаляем на всякий случай.
-
-            /*
-            $sql = "ALTER TABLE `{$wpdb->prefix}posts` DROP `post_link_type`;";
-            $wpdb->query($sql);
-            */
-
-        }
 
         update_option(INFO::OPTION_NAME . '_db_version', INFO::DB_VERSION);
     }

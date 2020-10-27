@@ -35,43 +35,6 @@ class Browse
         $this->define_hooks();
     }
 
-    public function xsl_add_option()
-    {
-        $option = 'per_page';
-        $args = array(
-            'label' => __('Number of items per page:'),
-            'default' => 10,
-            'option' => 'xsl_per_page'
-        );
-        add_screen_option($option, $args);
-    }
-
-    public function xsl_set_option($status, $option, $value)
-    {
-        if ('xsl_per_page' == $option) {
-            return $value;
-        }
-
-        return $status;
-    }
-
-    public function xsl_get_option()
-    {
-        $user = get_current_user_id();
-        $screen = get_current_screen();
-        $option = $screen->get_option('per_page', 'option');
-
-        $per_page = get_user_meta($user, $option, true);
-
-        if (empty ($per_page) || $per_page < 1) {
-
-            $per_page = $screen->get_option('per_page', 'default');
-
-        }
-
-        return $per_page;
-    }
-
     public function define_hooks()
     {
         // добвляем закладку опций вверху страницы со списком ссылок
@@ -116,6 +79,26 @@ class Browse
         $this->loader->run();
     }
 
+    public function xsl_add_option()
+    {
+        $option = 'per_page';
+        $args = array(
+            'label' => __('Number of items per page:'),
+            'default' => 10,
+            'option' => 'xsl_per_page'
+        );
+        add_screen_option($option, $args);
+    }
+
+    public function xsl_set_option($status, $option, $value)
+    {
+        if ('xsl_per_page' == $option) {
+            return $value;
+        }
+
+        return $status;
+    }
+
     public function render()
     {
         if (isset($_GET['edit']) && $_GET['edit'] == 'true') {
@@ -123,151 +106,6 @@ class Browse
         } else {
             $this->browse();
         }
-    }
-
-    public function swap_order($order)
-    {
-        if ($order == 'desc') {
-            return 'asc';
-        }
-
-        return 'desc';
-    }
-
-    public function build_header($label, $title, $orderby, $order)
-    {
-        $result = "";
-        $ord = $label == $orderby ? $this->swap_order($order) : 'asc';
-        $show_order = $label == $orderby ? 'column-primary sorted ' . $order : 'sortable asc';
-        $search = "";
-        if (isset($this->q) && $this->q != "")
-            $search = '&amp;q=' . $this->q;
-        $width = $label == 'link' ? ' width="30%"' : '';
-        $result .= '<th scope="col"' . $width . ' class="manage-column sortable ' . $show_order . '"><a href="' . admin_url('/admin.php?page=xsmartlink_list') . '&amp;orderby=' . $label . '&amp;order=' . $ord . $search . '"><span>' . $title . '</span><span class="sorting-indicator"></span></a></ht>';
-
-        return $result;
-    }
-
-    private function browse()
-    {
-        global $wpdb;
-
-        // where
-        $where = "";
-        if (isset($_POST['xlinks_search'])) {
-            $xlinks_search = $_POST['xlinks_search'];
-            $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
-            $this->q = $xlinks_search;
-        } elseif (isset($_GET['q']) AND $_GET['q'] != '') {
-            $xlinks_search = $_GET['q'];
-            $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
-            $this->q = $xlinks_search;
-        }
-
-        // order by
-        $orderby_ = array(
-            'word' => 'a.value',
-            'link' => 'a.link',
-            'req' => 'a.req',
-            'error' => 'a.error404',
-        );
-        $order_ = array('asc', 'desc');
-        $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : 'word';
-        $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
-        if (!array_key_exists($orderby, $orderby_)) {
-            $orderby = 'word';
-        }
-        if (!in_array($order, $order_)) {
-            $order = 'asc';
-        }
-
-        $all_items = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}xanchors a {$where}");
-        $limit = "";
-        if ($all_items > 0) {
-
-            $p = new pagination();
-            $p->items($all_items);
-            $p->nextLabel(__('Forward', $this->plugin_slug));
-            $p->prevLabel(__('Back', $this->plugin_slug));
-            $p->limit($this->xsl_get_option());
-            $p->parameterName(Info::XLINKS_PAGE_KEY);
-            $p->addParam('orderby', $orderby);
-            $p->addParam('order', $order);
-            if (isset($xlinks_search) && $xlinks_search != "")
-                $p->addParam('q', $xlinks_search);
-            $p->target("?page=xsmartlink_list");
-            if (!isset($_GET[Info::XLINKS_PAGE_KEY])) {
-                $p->currentPage(1);
-            } else {
-                $p->currentPage((int)$_GET[Info::XLINKS_PAGE_KEY]);
-            }
-            $p->calculate();
-            $limit = "LIMIT " . ($p->page - 1) * $p->limit . ", {$p->limit}";
-        }
-
-        $anchors = $wpdb->get_results("
-            SELECT
-                a.id,
-                a.value,
-                a.link,
-                a.req,
-                a.error404,
-                IFNULL(l.count,0) count,
-                a.attachment_id
-            FROM
-                {$wpdb->prefix}xanchors a
-                LEFT JOIN (SELECT anchor_id, count(*) count FROM {$wpdb->prefix}xlinks GROUP BY anchor_id) l ON l.anchor_id = a.id {$where}
-            ORDER BY
-                /*a.error404 DESC, a.link ASC*/
-            " . $orderby_[$orderby] . ' ' . $order . ' ' . $limit);
-        $items = array();
-
-        foreach ($anchors as $anchor) {
-            $links = array();
-            $data = $wpdb->get_results("
-                SELECT
-                    p.ID /* , p.guid, p.post_title */
-                FROM
-                    {$wpdb->prefix}xlinks l
-                    LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id
-                WHERE
-                    l.anchor_id={$anchor->id}
-                ");
-            foreach ($data as $row) {
-                $links[] = array('ID' => $row->ID, 'link' => get_permalink($row->ID));
-            }
-            // get images from link if exists
-            $image = "";
-            $link_id = url_to_postid($anchor->link);
-            if ($link_id != 0) {
-                $thumbnail_id = get_post_thumbnail_id($link_id);
-                if ($thumbnail_id != "")
-                    $image = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
-                else
-                    $image = plugin_dir_url(__FILE__) . 'img/noimage.png';
-            } elseif ($anchor->attachment_id != 0) {
-                $image = wp_get_attachment_thumb_url($anchor->attachment_id);
-            }
-
-            $items[] = array(
-                'id' => $anchor->id,
-                'anchor' => $anchor->value,
-                'link' => urldecode($this->idna->decode($anchor->link)),
-                'link_id' => $link_id,
-                'donors' => $links,
-                'req' => $anchor->req,
-                'count' => $anchor->count,
-                'error404' => $anchor->error404,
-                //'image' => $anchor->attachment_id == 0 ? "" : wp_get_attachment_thumb_url($anchor->attachment_id),
-                'image' => $image,
-                'attachment_id' => $anchor->attachment_id
-            );
-        }
-
-        // View
-        $heading = __('Manage links', $this->plugin_slug);
-        $per_page = Info::XLINKS_PER_RECORD;
-        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/view_browse.php';
     }
 
     private function edit()
@@ -348,6 +186,194 @@ class Browse
         // View
         $heading = __('Edit anchor', $this->plugin_slug);
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/view_browse_edit.php';
+    }
+
+    private function browse()
+    {
+        global $wpdb;
+
+        // where
+        $where = "";
+        if (isset($_POST['xlinks_search'])) {
+            $xlinks_search = $_POST['xlinks_search'];
+            $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
+            $this->q = $xlinks_search;
+        } elseif (isset($_GET['q']) AND $_GET['q'] != '') {
+            $xlinks_search = $_GET['q'];
+            $where = " where a.value like '%{$xlinks_search}%' OR a.link like '%{$xlinks_search}%' ";
+            $this->q = $xlinks_search;
+        }
+
+        // order by
+        $orderby_ = array(
+            'word' => 'a.value',
+            'link' => 'a.link',
+            'req' => 'a.req',
+            'error' => 'a.error404',
+            'link_state' => 'a.link_state',
+        );
+        $order_ = array('asc', 'desc');
+        $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : 'word';
+        $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+        if (!array_key_exists($orderby, $orderby_)) {
+            $orderby = 'word';
+        }
+        if (!in_array($order, $order_)) {
+            $order = 'asc';
+        }
+
+        $all_items = $wpdb->get_var("SELECT count(*) FROM {$wpdb->prefix}xanchors a {$where}");
+        $limit = "";
+        if ($all_items > 0) {
+
+            $p = new pagination();
+            $p->items($all_items);
+            $p->nextLabel(__('Forward', $this->plugin_slug));
+            $p->prevLabel(__('Back', $this->plugin_slug));
+            $p->limit($this->xsl_get_option());
+            $p->parameterName(Info::XLINKS_PAGE_KEY);
+            $p->addParam('orderby', $orderby);
+            $p->addParam('order', $order);
+            if (isset($xlinks_search) && $xlinks_search != "")
+                $p->addParam('q', $xlinks_search);
+            $p->target("?page=xsmartlink_list");
+            if (!isset($_GET[Info::XLINKS_PAGE_KEY])) {
+                $p->currentPage(1);
+            } else {
+                $p->currentPage((int)$_GET[Info::XLINKS_PAGE_KEY]);
+            }
+            $p->calculate();
+            $limit = "LIMIT " . ($p->page - 1) * $p->limit . ", {$p->limit}";
+        }
+
+        $anchors = $wpdb->get_results("
+            SELECT
+                a.id,
+                a.value,
+                a.link,
+                a.req,
+                a.error404,
+                IFNULL(l.count,0) count,
+                a.attachment_id,
+                a.link_state   
+            FROM
+                {$wpdb->prefix}xanchors a
+                LEFT JOIN (SELECT anchor_id, count(*) count FROM {$wpdb->prefix}xlinks GROUP BY anchor_id) l ON l.anchor_id = a.id {$where}
+            ORDER BY
+                /*a.error404 DESC, a.link ASC*/
+            " . $orderby_[$orderby] . ' ' . $order . ' ' . $limit);
+        $items = array();
+
+        foreach ($anchors as $anchor) {
+            $links = array();
+            $data = $wpdb->get_results("
+                SELECT
+                    p.ID /* , p.guid, p.post_title */
+                FROM
+                    {$wpdb->prefix}xlinks l
+                    LEFT JOIN {$wpdb->prefix}posts p ON p.ID = l.post_id
+                WHERE
+                    l.anchor_id={$anchor->id}
+                ");
+            foreach ($data as $row) {
+                $links[] = array('ID' => $row->ID, 'link' => get_permalink($row->ID));
+            }
+            // get images from link if exists
+            $image = "";
+            $link_id = url_to_postid($anchor->link);
+            if ($link_id != 0) {
+                $thumbnail_id = get_post_thumbnail_id($link_id);
+                if ($thumbnail_id != "")
+                    $image = wp_get_attachment_thumb_url(get_post_thumbnail_id($link_id));
+                else
+                    $image = plugin_dir_url(__FILE__) . 'img/noimage.png';
+            } elseif ($anchor->attachment_id != 0) {
+                $image = wp_get_attachment_thumb_url($anchor->attachment_id);
+            }
+
+            $items[] = array(
+                'id' => $anchor->id,
+                'anchor' => $anchor->value,
+                'link' => urldecode($this->idna->decode($anchor->link)),
+                'link_id' => $link_id,
+                'donors' => $links,
+                'req' => $anchor->req,
+                'count' => $anchor->count,
+                'error404' => $anchor->error404,
+                //'image' => $anchor->attachment_id == 0 ? "" : wp_get_attachment_thumb_url($anchor->attachment_id),
+                'image' => $image,
+                'attachment_id' => $anchor->attachment_id,
+                'link_state' => $this->getState($anchor->link_state)
+            );
+        }
+
+        // View
+        $heading = __('Manage links', $this->plugin_slug);
+        $per_page = Info::XLINKS_PER_RECORD;
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/view_browse.php';
+    }
+
+    public function xsl_get_option()
+    {
+        $user = get_current_user_id();
+        $screen = get_current_screen();
+        $option = $screen->get_option('per_page', 'option');
+
+        $per_page = get_user_meta($user, $option, true);
+
+        if (empty ($per_page) || $per_page < 1) {
+
+            $per_page = $screen->get_option('per_page', 'default');
+
+        }
+
+        return $per_page;
+    }
+
+    private function getState($link_state)
+    {
+        $result = '';
+        switch ($link_state) {
+            case 0:
+                $result = '';
+                break;
+            case 1:
+                $result = 'NONE';
+                break;
+            case 2:
+                $result = 'EXIST';
+                break;
+            case 3:
+                $result = 'NO FOLLOW';
+                break;
+            case 4:
+                $result = 'MIXED';
+                break;
+        }
+        return $result;
+    }
+
+    public function build_header($label, $title, $orderby, $order)
+    {
+        $result = "";
+        $ord = $label == $orderby ? $this->swap_order($order) : 'asc';
+        $show_order = $label == $orderby ? 'column-primary sorted ' . $order : 'sortable asc';
+        $search = "";
+        if (isset($this->q) && $this->q != "")
+            $search = '&amp;q=' . $this->q;
+        $width = $label == 'link' ? ' width="30%"' : '';
+        $result .= '<th scope="col"' . $width . ' class="manage-column sortable ' . $show_order . '"><a href="' . admin_url('/admin.php?page=xsmartlink_list') . '&amp;orderby=' . $label . '&amp;order=' . $ord . $search . '"><span>' . $title . '</span><span class="sorting-indicator"></span></a></ht>';
+
+        return $result;
+    }
+
+    public function swap_order($order)
+    {
+        if ($order == 'desc') {
+            return 'asc';
+        }
+
+        return 'desc';
     }
 
     public function delete_all()
