@@ -478,39 +478,40 @@ class Anchors
         curl_setopt($handle, CURLOPT_TIMEOUT, 3000);
         $response = curl_exec($handle);
 
-        $link_state = 1;
-        $nofollow = 0;
-        $follow = 0;
-        preg_match_all('~<a(.*)<\/a>~isU', $response, $match);
-        if (isset($match[0]) && count($match[0])) {
-            foreach ($match[0] as $l) {
-                preg_match('~href="(.*)"~isU', $l, $href);
-                if (isset($href[1])) {
-                    $url = parse_url($href[1], PHP_URL_HOST);
-                    if (mb_strpos(strtolower($url), strtolower($this->settings['local_domain'])) !== false) {
-                        $follow++;
-                        preg_match('~rel="(.*)"~isU', $l, $rel);
-                        if (isset($rel[1])) {
-                            if (strpos(strtolower($rel[1]), 'nofollow') !== false) {
-                                $nofollow++;
+        if (strpos(strtolower($link), $this->getSimpleUrl($this->settings['local_domain'])) === false) {
+            $link_state = 1;
+            $nofollow = 0;
+            $follow = 0;
+            preg_match_all('~<a(.*)<\/a>~isU', $response, $match);
+            if (isset($match[0]) && count($match[0])) {
+                foreach ($match[0] as $l) {
+                    preg_match('~href="(.*)"~isU', $l, $href);
+                    if (isset($href[1])) {
+                        $url = parse_url($href[1], PHP_URL_HOST);
+                        if (strpos(strtolower($url), $this->getSimpleUrl($this->settings['local_domain'])) !== false) {
+                            $follow++;
+                            preg_match('~rel="(.*)"~isU', $l, $rel);
+                            if (isset($rel[1])) {
+                                if (strpos(strtolower($rel[1]), 'nofollow') !== false) {
+                                    $nofollow++;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 //        $result = ''; // 0
 //        $result = 'NONE'; // 1
 //        $result = 'FOLLOW'; // 2
 //        $result = 'NO FOLLOW'; // 3
 //        $result = 'MIXED'; // 4
-        if ($follow > 0)
-            $link_state = 2;
-        if ($nofollow > 0)
-            $link_state = 3;
-        if ($follow > 0 && $nofollow > 0 && $follow !== $nofollow)
-            $link_state = 4;
-        error_log('result: ' . $link_state);
+            if ($follow > 0)
+                $link_state = 2;
+            if ($nofollow > 0)
+                $link_state = 3;
+            if ($follow > 0 && $nofollow > 0 && $follow !== $nofollow)
+                $link_state = 4;
+        }
 
         $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
         if ($httpCode == 0) {
@@ -522,5 +523,18 @@ class Anchors
         curl_close($handle);
 
         return $httpCode;
+    }
+
+    private function getSimpleUrl($local_domain)
+    {
+        $local_domain = mb_strtolower($local_domain);
+        if (mb_strpos($local_domain, 'http://') === 0)
+            $local_domain = mb_substr($local_domain, 7);
+        if (mb_strpos($local_domain, 'https://') === 0)
+            $local_domain = mb_substr($local_domain, 8);
+        $local_domain = ltrim($local_domain);
+        if (mb_strpos($local_domain, 'www.') === 0)
+            $local_domain = mb_substr($local_domain, 4);
+        return rtrim($local_domain, '/');
     }
 }

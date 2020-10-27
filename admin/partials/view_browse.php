@@ -10,7 +10,7 @@ var xsl_per_page=<?=$per_page?>
             <a href="#" id="xl_relink_button" class="button button-primary"
                onclick="xsml_process_relinks_js1();"><?= _e( 'Relink all posts', $this->plugin_slug ) ?></a>
             <a href="#" id="xl_delete404_button" class="button button-default"
-               onclick="xsml_process_relinks_js2();"><?= _e( 'Find links with error 404', $this->plugin_slug ) ?></a>
+               onclick="xsml_process_relinks_js2();"><?= _e( 'Get link statuses', $this->plugin_slug ) ?></a>
         </p>
         <div id="progressbar" style="display: none;">
             <div class="value"></div>

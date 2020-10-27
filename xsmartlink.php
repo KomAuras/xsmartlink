@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       xSmart Link
- * Plugin URI:        https://bitbucket.org/EvgenyStefanenko/xsmartlink
+ * Plugin URI:        https://github.com/KomAuras/xsmartlink/
  * Description:       Smart link posts plugin
  * Version:           2.1.3
  * Author:            Evgeny Stefanenko
