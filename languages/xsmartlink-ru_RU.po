@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2020-10-27 20:53+1000\n"
-"PO-Revision-Date: 2020-10-27 20:53+1000\n"
+"POT-Creation-Date: 2020-10-28 20:02+1000\n"
+"PO-Revision-Date: 2020-10-28 20:03+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -80,7 +80,7 @@ msgid "Stat"
 msgstr "Статистика"
 
 #: admin/class-admin.php:217 admin/class-admin.php:218
-#: admin/class-admin.php:292
+#: admin/class-admin.php:299
 msgid "Options"
 msgstr "Настройки плагина"
 
@@ -88,7 +88,7 @@ msgstr "Настройки плагина"
 msgid "Links in posts"
 msgstr "Добавлять ссылки в конец страницы"
 
-#: admin/class-admin.php:237 admin/class-admin.php:275
+#: admin/class-admin.php:237 admin/class-admin.php:282
 msgid "Show"
 msgstr "Выводить"
 
@@ -109,26 +109,34 @@ msgid "Local url"
 msgstr "Имя локального домена"
 
 #: admin/class-admin.php:259
+msgid "Domain url for search"
+msgstr "Домен для поиска"
+
+#: admin/class-admin.php:262
+msgid "used for get anchor status"
+msgstr "используется для определения статуса ссылки"
+
+#: admin/class-admin.php:266
 msgid "For new posts"
 msgstr "Новые записи"
 
-#: admin/class-admin.php:262
+#: admin/class-admin.php:269
 msgid "Add to anchors"
 msgstr "Добавлять в список ссылок"
 
-#: admin/class-admin.php:266
+#: admin/class-admin.php:273
 msgid "Default count for new anchor (default)"
 msgstr "Количество связей для ссылок (по умолчанию)"
 
-#: admin/class-admin.php:272
+#: admin/class-admin.php:279
 msgid "Show images in links"
 msgstr "Показывать ссылки с изображениями"
 
-#: admin/class-admin.php:279
+#: admin/class-admin.php:286
 msgid "Image height"
 msgstr "Высота картинки (для отображения)"
 
-#: admin/class-admin.php:293
+#: admin/class-admin.php:300
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 

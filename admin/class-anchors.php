@@ -477,8 +477,7 @@ class Anchors
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handle, CURLOPT_TIMEOUT, 3000);
         $response = curl_exec($handle);
-
-        if (strpos(strtolower($link), $this->getSimpleUrl($this->settings['local_domain'])) === false) {
+        if (isset($this->settings['search_domain']) && strpos(strtolower($link), $this->getSimpleUrl($this->settings['search_domain'])) === false) {
             $link_state = 1;
             $nofollow = 0;
             $follow = 0;
@@ -488,7 +487,7 @@ class Anchors
                     preg_match('~href="(.*)"~isU', $l, $href);
                     if (isset($href[1])) {
                         $url = parse_url($href[1], PHP_URL_HOST);
-                        if (strpos(strtolower($url), $this->getSimpleUrl($this->settings['local_domain'])) !== false) {
+                        if (strpos(strtolower($url), $this->getSimpleUrl($this->settings['search_domain'])) !== false) {
                             $follow++;
                             preg_match('~rel="(.*)"~isU', $l, $rel);
                             if (isset($rel[1])) {

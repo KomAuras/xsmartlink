@@ -21,6 +21,7 @@ class Activator
                 'global_req' => 5,
                 'local_req' => 1,
                 'local_domain' => get_site_url(),
+                'search_domain' => get_site_url(),
                 'new_post_to_anchors' => 0,
                 'new_req' => 3,
                 'image_enabled' => 0,

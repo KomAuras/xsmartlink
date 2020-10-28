@@ -64,7 +64,7 @@ class Admin
             if ($field['type'] === 'text') {
                 $output[] = array(
                     'label' => '<label for="' . $setting . '">' . $label . '</label>',
-                    'control' => '<input type="text" id="' . $setting . '" class="' . $class . '" name="' . $setting . '" value="' . $settings[$slug] . '">'
+                    'control' => '<input type="text" id="' . $setting . '" class="' . $class . '" name="' . $setting . '" value="' . $settings[$slug] . '">' . $text
                 );
             } elseif ($field['type'] === 'number') {
                 $output[] = array(
@@ -253,6 +253,13 @@ class Admin
                 'label' => __('Local url', $this->plugin_slug),
                 'slug' => 'local_domain',
                 'type' => 'text',
+                'class' => 'regular-text code',
+            ],
+            [
+                'label' => __('Domain url for search', $this->plugin_slug),
+                'slug' => 'search_domain',
+                'type' => 'text',
+                'text' => '<p class="description" id="tagline-description">' . __('used for get anchor status', $this->plugin_slug) . '</p>',
                 'class' => 'regular-text code',
             ],
             [
