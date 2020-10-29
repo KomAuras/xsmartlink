@@ -19,14 +19,14 @@ class Info
      *
      * @var string
      */
-    const VERSION = '2.1.3';
+    const VERSION = '2.1.4';
 
     /**
      * The DB version.
      *
      * @var string
      */
-    const DB_VERSION = '6';
+    const DB_VERSION = '7';
 
     /**
      * The nae for the entry in the options table.

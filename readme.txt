@@ -14,6 +14,9 @@ Smart link links to posts
 
 == Changelog ==
 
+= 2.1.4 =
+* Add domain for search in settiongs
+
 = 2.1.3 =
 * Check link exists for anchor. Return "", NONE, EXIST, NO FOLLOW, MIXED
 
