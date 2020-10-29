@@ -484,12 +484,12 @@ class Anchors
             preg_match_all('~<a(.*)<\/a>~isU', $response, $match);
             if (isset($match[0]) && count($match[0])) {
                 foreach ($match[0] as $l) {
-                    preg_match('~href="(.*)"~isU', $l, $href);
+                    preg_match('~href=["\'](.*)["\']~isU', $l, $href);
                     if (isset($href[1])) {
                         $url = parse_url($href[1], PHP_URL_HOST);
                         if (strpos(strtolower($url), $this->getSimpleUrl($this->settings['search_domain'])) !== false) {
                             $follow++;
-                            preg_match('~rel="(.*)"~isU', $l, $rel);
+                            preg_match('~rel=["\'](.*)["\']~isU', $l, $rel);
                             if (isset($rel[1])) {
                                 if (strpos(strtolower($rel[1]), 'nofollow') !== false) {
                                     $nofollow++;
