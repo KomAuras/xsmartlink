@@ -25,6 +25,7 @@ class Activator
                 'new_post_to_anchors' => 0,
                 'new_req' => 3,
                 'image_enabled' => 0,
+                'show_links' => 1,
                 'image_height' => 150,
             );
             update_option(INFO::OPTION_NAME, $default_options);

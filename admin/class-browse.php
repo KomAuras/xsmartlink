@@ -71,7 +71,9 @@ class Browse
             $this->loader->add_action('load-post-new.php', $this->anchors, 'add_metaboxes');
         }
         // добавляем ссылки в конец поста
-        $this->loader->add_filter('the_content', $this->anchors, 'add_links_to_content');
+	   	$this->loader->add_filter('the_content', $this->anchors, 'add_links_to_content');
+        $this->loader->add_action('wp_loaded', $this->anchors, 'add_shortcode');
+
         // добавляем столбец в посты
         $this->loader->add_filter('manage_posts_columns', $this->anchors, 'xsl_columns_head', 10, 2);
         // показываем данные в столбце
@@ -255,7 +257,7 @@ class Browse
                 a.error404,
                 IFNULL(l.count,0) count,
                 a.attachment_id,
-                a.link_state   
+                a.link_state
             FROM
                 {$wpdb->prefix}xanchors a
                 LEFT JOIN (SELECT anchor_id, count(*) count FROM {$wpdb->prefix}xlinks GROUP BY anchor_id) l ON l.anchor_id = a.id {$where}

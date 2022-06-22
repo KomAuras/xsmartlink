@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xsmartlink\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2020-10-28 20:02+1000\n"
-"PO-Revision-Date: 2020-10-28 20:03+1000\n"
+"POT-Creation-Date: 2022-06-22 13:01+1000\n"
+"PO-Revision-Date: 2022-06-22 13:01+1000\n"
 "Last-Translator: \n"
 "Language-Team: Evgeny Stefanenko <mixer@clarionlife.net>\n"
 "Language: ru_RU\n"
@@ -16,7 +16,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Poedit-Basepath: ..\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: languages\n"
@@ -49,18 +49,18 @@ msgstr "Акцепторы"
 msgid "Select post type"
 msgstr "Выберите вид записи"
 
-#: admin/class-admin.php:136 admin/class-anchors.php:44
-#: admin/class-anchors.php:132 admin/partials/view_browse.php:40
+#: admin/class-admin.php:136 admin/class-anchors.php:52
+#: admin/class-anchors.php:140 admin/partials/view_browse.php:40
 #: admin/partials/view_browse.php:55 admin/partials/view_browse_edit.php:16
 msgid "Acceptor"
 msgstr "Акцептор"
 
-#: admin/class-admin.php:137 admin/class-anchors.php:130
+#: admin/class-admin.php:137 admin/class-anchors.php:138
 #: admin/partials/view_browse.php:42 admin/partials/view_browse.php:57
 msgid "Donor"
 msgstr "Пост донор"
 
-#: admin/class-admin.php:138 admin/class-anchors.php:117
+#: admin/class-admin.php:138 admin/class-anchors.php:125
 msgid "Anchor list"
 msgstr "Список ссылок"
 
@@ -75,7 +75,7 @@ msgid "Export"
 msgstr "Экспорт"
 
 #: admin/class-admin.php:209 admin/class-admin.php:210
-#: admin/class-anchors.php:111
+#: admin/class-anchors.php:119
 msgid "Stat"
 msgstr "Статистика"
 
@@ -140,39 +140,39 @@ msgstr "Высота картинки (для отображения)"
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
-#: admin/class-anchors.php:32
+#: admin/class-anchors.php:40
 msgid "Number of links"
 msgstr "Количество ссылок"
 
-#: admin/class-anchors.php:128
+#: admin/class-anchors.php:136
 msgid "Post type:"
 msgstr "Вид записи:"
 
-#: admin/class-anchors.php:212
+#: admin/class-anchors.php:225
 msgid "See also:"
 msgstr "Читайте также:"
 
-#: admin/class-browse.php:86
+#: admin/class-browse.php:90
 msgid "Number of items per page:"
 msgstr "Количество элементов на странице:"
 
-#: admin/class-browse.php:181
+#: admin/class-browse.php:185
 msgid "Error on save. Please refer to admin!"
 msgstr "Ошибка при записи. Сообщите программисту!"
 
-#: admin/class-browse.php:187
+#: admin/class-browse.php:191
 msgid "Edit anchor"
 msgstr "Редактирование ссылки"
 
-#: admin/class-browse.php:231
+#: admin/class-browse.php:235
 msgid "Forward"
 msgstr "Вперед"
 
-#: admin/class-browse.php:232
+#: admin/class-browse.php:236
 msgid "Back"
 msgstr "Назад"
 
-#: admin/class-browse.php:311
+#: admin/class-browse.php:315
 msgid "Manage links"
 msgstr "Управление ссылками"
 
@@ -324,6 +324,9 @@ msgstr "Читайте также"
 #: widgets/widget.php:51
 msgid "Title:"
 msgstr "Заголовок:"
+
+#~ msgid "Show links in post bottom"
+#~ msgstr "Добавлять ссылки в конец записи"
 
 #~ msgid "Find links with error 404"
 #~ msgstr "Найти ссылки с ошибкой 404"

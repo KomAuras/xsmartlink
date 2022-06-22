@@ -25,6 +25,14 @@ class Anchors
         $this->hueman = $data->name == 'hueman' || $data->template == 'hueman';
     }
 
+    function add_shortcode() {
+   		add_shortcode( 'xlinks' , array($this, 'add_xlinks_shortcode') );
+    }
+
+    function add_xlinks_shortcode( $atts ) {
+      	return $this->get_link();
+    }
+
     // Add posts column
     function xsl_columns_head($posts_columns, $post_type)
     {
@@ -202,10 +210,18 @@ class Anchors
 
     public function add_links_to_content($content)
     {
-        if (is_single() && isset($this->settings['insert_in_pages']) && $this->settings['insert_in_pages'] == 1) {
+    	$text = '';
+    	if (isset($this->settings['insert_in_pages']) && $this->settings['insert_in_pages'] == 1) {
+        	$text = $this->get_link();
+        }
+        return $content . $text;
+    }
+
+    private function get_link() {
+        if (is_single()) {
             $img = isset($this->settings['image_enabled']) && $this->settings['image_enabled'] == 1;
             $data = $this->get_post_anchors(get_post());
-            if (count($data)) {
+            if (is_array($data) && count($data)) {
 
                 $template = "
                 <hr style=\"clear:both\">
@@ -242,11 +258,10 @@ class Anchors
                     $result .= "<div style='clear: both'></div>";
 
                 $template = str_replace("{interests_list}", $result, $template);
-                $content = $content . $template;
+                return $template;
             }
         }
-
-        return $content;
+        return '';
     }
 
     public function on_save_post_type($post_id, $post, $update)
